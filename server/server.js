@@ -8,10 +8,26 @@ var wss = new WebSocketServer({ port: 8080 });
 
 var peers = new p.Peers();
 
+function sendToOthers(ID, response) {
+    var others = peers.getOthers(ID);
+    for (var i = 0; i < others.length; i++) {
+        others[i].ws.send(response.asString());
+    }
+}
+
+function sendToPerson(ID, response){
+    var person = peers.getParticular(ID);
+    person.ws.send(response.asString());
+}
+
 wss.on('connection', function (ws) {
 
     ws.on('message', function (message) {
-        console.log('received: %s', message);
+        var logmsg = ('received: ' + message);
+        if(message.length > 70){
+            logmsg = logmsg.substring(0,70) + "...";
+        }
+        console.log(logmsg);
 
         var response = {};
 
@@ -34,27 +50,27 @@ wss.on('connection', function (ws) {
                     else {
                         response = new m.Message("text", ws.connectionID + ": " + JSON.stringify(messageJSON.message));
                     }
-                    var others = peers.getOthers(ws.connectionID);
-                    for (var i = 0; i < others.length; i++) {
-                        others[i].ws.send(response.asString());
-                    }
+                    sendToOthers(ws.connectionID, response);
                     return;
                 case "ID":
                     ws.connectionID = messageJSON.message;
                     peers.add(messageJSON.message, ws);
                     console.log("peer " + messageJSON.message + " added.");
                     response = new m.Message("text", "person " + messageJSON.message + " has connected");
-                    var others = peers.getOthers(messageJSON.message);
-                    for (var i = 0; i < others.length; i++) {
-                        others[i].ws.send(response.asString());
-                    }
+                    sendToOthers(messageJSON.message, response);
                     return;
                 case "offer":
-                    break;
+                    var response = new m.Message("offer", messageJSON.message);
+                    sendToOthers(ws.connectionID, response);
+                    return;
                 case "answer":
-                    break;
+                    var response = new m.Message("answer", messageJSON.message.answer);
+                    sendToPerson(messageJSON.message.to, response);
+                    return;
                 case "candidate":
-                    break;
+                    response = new m.Message("candidate", messageJSON.message.candidate);
+                    sendToOthers(ws.connectionID, response);
+                    return;
                 default:
                     console.log("Defaulted");
                     response = new m.Message("text", "socket received: " + message);
@@ -63,7 +79,7 @@ wss.on('connection', function (ws) {
         catch (e) {
             response = new m.Message("text", "socket received: " + JSON.stringify(message));
             console.log("error: " + e.message);
-            console.log("stack: " + e.stack);
+            //console.log("stack: " + e.stack);
         }
 
         ws.send(response.asString());

@@ -45,7 +45,16 @@ function Sonmessage(msg) {
     if (dataJSON != null) {
         switch (dataJSON.type) {
             case "text":
-                log(dataJSON.message);
+                log("Server: " + dataJSON.message);
+                break;
+            case "offer":
+                handleOffer(dataJSON.message);
+                break;
+            case "answer":
+                processAnswer(dataJSON.message);
+                break;
+            case "candidate":
+                processIce(dataJSON.message);
                 break;
             default:
                 log(dataJSON);

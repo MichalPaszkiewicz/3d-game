@@ -1,4 +1,5 @@
-function chat(message) {
+function serverChat(message) {
     sendToServer("chat", message);
-    log(message);
+    log("me: " + message);
 }
+

@@ -41,7 +41,9 @@ module.exports = {
                 return result;
             },
             getParticular: function (ID) {
-                for (var i = 0; i < self.items; i++) {
+                console.log("the ID:" + ID);
+                for (var i = 0; i < self.items.length; i++) {
+                    console.log("ID: " + self.items[i].ID)
                     if (self.items[i].ID == ID) {
                         return self.items[i];
                     }
