@@ -86,7 +86,9 @@ wss.on('connection', function (ws) {
     });
 
     ws.on("close", function () {
-        console.log("connection lost");
+        response = new m.Message("red", "person " + ws.connectionID + " has disconnected.");
+        sendToOthers(ws.connectionID, response);
+        console.log("connection to " + ws.connectionID + " lost");
         peers.remove(ws.connectionID);
     });
 

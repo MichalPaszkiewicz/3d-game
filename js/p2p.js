@@ -14,7 +14,7 @@ peerConnection.onicecandidate = function (e) {
 
 var dataChannel = peerConnection.createDataChannel("datachannel", { reliable: false });
 
-dataChannel.onmessage = function (e) { log("webRTC: " + e.data); };
+dataChannel.onmessage = function (e) { log("(webRTC) " + e.data); };
 dataChannel.onopen = function () { log("------ DATACHANNEL OPENED ------"); };
 dataChannel.onclose = function () { log("------- DC closed! -------") };
 dataChannel.onerror = function () { log("DC ERROR!!!") };
@@ -43,34 +43,6 @@ function processAnswer(answer) {
     peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     log("------ PROCESSED ANSWER ------");
 };
-
-function openDataChannel() {
-    var config = { "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] };
-    var connection = { 'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }] };
-
-    peerConnection = new webkitRTCPeerConnection(config, connection);
-    peerConnection.onicecandidate = function (e) {
-        if (!peerConnection || !e || !e.candidate) return;
-        var candidate = event.candidate;
-        sendToServer("candidate", { candidate: candidate });
-    }
-
-    dataChannel = peerConnection.createDataChannel(
-        "datachannel", { reliable: false });
-
-    dataChannel.onmessage = function (e) {
-        log("DC from [" + user2 + "]:" + e.data);
-    }
-    dataChannel.onopen = function () {
-        log("------ DATACHANNEL OPENED ------")
-    };
-    dataChannel.onclose = function () { log("------ DC closed! ------") };
-    dataChannel.onerror = function () { log("DC ERROR!!!") };
-
-    peerConnection.ondatachannel = function () {
-        log('peerConnection.ondatachannel event fired.');
-    };
-}
 
 function handleOffer(offer){
     peerConnection.setRemoteDescription(new RTCSessionDescription(offer.offer));

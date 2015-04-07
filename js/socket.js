@@ -45,8 +45,10 @@ function Sonmessage(msg) {
     if (dataJSON != null) {
         switch (dataJSON.type) {
             case "text":
-                log("Server: " + dataJSON.message);
+                log("(Server) " + dataJSON.message);
                 break;
+            case "red":
+                log("(Server) " + dataJSON.message, "red");
             case "offer":
                 handleOffer(dataJSON.message);
                 break;
