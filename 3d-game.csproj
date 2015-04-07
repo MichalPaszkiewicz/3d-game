@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{E7D44433-EC52-4009-83F1-E00F7020229D}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>_3d_game</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets')" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>54723</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:54723/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="css\base.css" />
+    <Content Include="css\base.min.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="index.html" />
+    <Content Include="js\%40script.js" />
+    <Content Include="server\message.js" />
+    <Content Include="server\node_modules\ws\index.js" />
+    <Content Include="server\node_modules\ws\lib\browser.js" />
+    <Content Include="server\node_modules\ws\lib\BufferPool.js" />
+    <Content Include="server\node_modules\ws\lib\BufferUtil.fallback.js" />
+    <Content Include="server\node_modules\ws\lib\BufferUtil.js" />
+    <Content Include="server\node_modules\ws\lib\ErrorCodes.js" />
+    <Content Include="server\node_modules\ws\lib\Extensions.js" />
+    <Content Include="server\node_modules\ws\lib\PerMessageDeflate.js" />
+    <Content Include="server\node_modules\ws\lib\Receiver.hixie.js" />
+    <Content Include="server\node_modules\ws\lib\Receiver.js" />
+    <Content Include="server\node_modules\ws\lib\Sender.hixie.js" />
+    <Content Include="server\node_modules\ws\lib\Sender.js" />
+    <Content Include="server\node_modules\ws\lib\Validation.fallback.js" />
+    <Content Include="server\node_modules\ws\lib\Validation.js" />
+    <Content Include="server\node_modules\ws\lib\WebSocket.js" />
+    <Content Include="server\node_modules\ws\lib\WebSocketServer.js" />
+    <Content Include="server\node_modules\ws\node_modules\options\lib\options.js" />
+    <Content Include="server\node_modules\ws\node_modules\ultron\index.js" />
+    <Content Include="server\node_modules\ws\node_modules\ultron\test.js" />
+    <Content Include="server\peer.js" />
+    <Content Include="server\server.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\base.css.map" />
+    <Content Include="css\base.less" />
+    <Content Include="LICENSE" />
+    <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="js\canvas.ts" />
+    <TypeScriptCompile Include="js\comms\p2p.ts" />
+    <TypeScriptCompile Include="js\comms\socket.ts" />
+    <TypeScriptCompile Include="js\displays\logger.ts" />
+    <TypeScriptCompile Include="js\main.ts" />
+    <TypeScriptCompile Include="js\objects\message.ts" />
+    <TypeScriptCompile Include="Scripts\typings\webrtc\MediaStream.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\webrtc\RTCPeerConnection.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="server\node_modules\ws\.npmignore" />
+    <Content Include="server\node_modules\ws\.travis.yml" />
+    <Content Include="server\node_modules\ws\Makefile" />
+    <Content Include="server\node_modules\ws\node_modules\options\.npmignore" />
+    <Content Include="server\node_modules\ws\node_modules\options\Makefile" />
+    <Content Include="server\node_modules\ws\node_modules\options\package.json" />
+    <Content Include="server\node_modules\ws\node_modules\options\README.md" />
+    <Content Include="server\node_modules\ws\node_modules\ultron\.npmignore" />
+    <Content Include="server\node_modules\ws\node_modules\ultron\.travis.yml" />
+    <Content Include="server\node_modules\ws\node_modules\ultron\package.json" />
+    <Content Include="server\node_modules\ws\node_modules\ultron\README.md" />
+    <Content Include="server\node_modules\ws\package.json" />
+    <Content Include="server\node_modules\ws\README.md" />
+    <Content Include="server\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="js\libs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptOutFile>js/@script.js</TypeScriptOutFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+</Project>

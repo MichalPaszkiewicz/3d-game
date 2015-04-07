@@ -1,4 +1,4 @@
-function serverChat(message) {
+﻿function serverChat(message) {
     sendToServer("chat", message);
     log("me: " + message);
 }
@@ -6,4 +6,4 @@ function serverChat(message) {
 function chat(message) {
     dataChannel.send(myID + ": " + message);
     log("me: " + message);
-}
+} 

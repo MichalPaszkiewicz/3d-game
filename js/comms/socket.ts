@@ -1,4 +1,4 @@
-var serverString = "ws:localhost:8080";
+﻿var serverString = "ws:localhost:8080";
 
 var myID = Math.random().toString(16).replace('0.', '');
 
@@ -30,7 +30,7 @@ socket.onopen = Sonopen;
 socket.onmessage = Sonmessage;
 socket.onclose = Sonclose;
 
-var socketManager = new SocketManager();
+var socketManager = SocketManager();
 
 function Sonopen() {
     log("connected to WebSocket");
@@ -81,6 +81,6 @@ function Sonclose() {
 }
 
 function sendToServer(type, message) {
-    var newItem = new Message(type, message);
+    var newItem = Message(type, message);
     socket.send(newItem.asString());
-}
+} 
