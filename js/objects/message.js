@@ -1,4 +1,4 @@
-﻿var message = function (type, message) {
+﻿var Message = function (type, message) {
         
     var self = {};
     self.content = {

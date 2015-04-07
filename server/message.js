@@ -1,7 +1,7 @@
 ﻿// message.js
 // ==========
 module.exports = {
-    message: function (type, message) {
+    Message: function (type, message) {
         
         var self = {};
         self.content = {

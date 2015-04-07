@@ -1,5 +1,7 @@
 var serverString = "ws:localhost:8080";
 
+var myID = Math.random().toString(16).replace('0.', '');
+
 function SocketManager() {
     var self = this;
     self.retries = 10;
@@ -8,7 +10,7 @@ function SocketManager() {
     self.reconnect = function () {
         self.currentRetries++;
         log("reconnecting... (attempt:" + self.currentRetries + ")");
-        try{
+        try {
             socket = new WebSocket(serverString);
             socket.onopen = Sonopen;
             socket.onmessage = Sonmessage;
@@ -32,6 +34,7 @@ var socketManager = new SocketManager();
 
 function Sonopen() {
     log("connected to WebSocket");
+    sendToServer("ID", myID);
     socketManager.currentRetries = 0;
 }
 
@@ -39,8 +42,14 @@ function Sonmessage(msg) {
     var data = msg.data;
     var dataJSON = JSON.parse(data);
 
-    if (dataJSON != null && dataJSON.type == "text") {
-        log(dataJSON.message);
+    if (dataJSON != null) {
+        switch (dataJSON.type) {
+            case "text":
+                log(dataJSON.message);
+                break;
+            default:
+                log(dataJSON);
+        }
     }
     else {
         log("Received erroneous message from websocket", "red");
@@ -60,3 +69,7 @@ function Sonclose() {
     }
 }
 
+function sendToServer(type, message) {
+    var newItem = new Message(type, message);
+    socket.send(newItem.asString());
+}
