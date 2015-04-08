@@ -3,7 +3,7 @@
 
     self.height = canvas.height;
     self.logs = [];
-    self.log = function (text, colour) {
+    self.log = function (text : string, colour?: string) {
         if (colour == null) {
             colour = "black";
         }

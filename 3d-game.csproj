@@ -53,8 +53,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="css\base.css" />
-    <Content Include="css\base.min.css" />
+    <Content Include="css\base.css">
+      <DependentUpon>base.less</DependentUpon>
+    </Content>
+    <Content Include="css\base.min.css">
+      <DependentUpon>base.css</DependentUpon>
+    </Content>
+    <Content Include="css\styles.css">
+      <DependentUpon>styles.less</DependentUpon>
+    </Content>
+    <Content Include="css\styles.min.css">
+      <DependentUpon>styles.css</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="index.html" />
     <Content Include="js\%40script.js" />
@@ -83,7 +93,6 @@
     <Content Include="server\server.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="css\base.css.map" />
     <Content Include="css\base.less" />
     <Content Include="LICENSE" />
     <Content Include="README.md" />
@@ -132,6 +141,19 @@
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\styles.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\styles.css.map">
+      <DependentUpon>styles.css</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\base.css.map">
+      <DependentUpon>base.css</DependentUpon>
     </Content>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

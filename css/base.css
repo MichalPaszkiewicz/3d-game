@@ -3,4 +3,9 @@ body {
   margin: 0;
   padding: 0;
 }
+canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 /*# sourceMappingURL=base.css.map */
