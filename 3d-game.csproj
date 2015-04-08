@@ -58,6 +58,7 @@
     <Content Include="favicon.ico" />
     <Content Include="index.html" />
     <Content Include="js\%40script.js" />
+    <Content Include="js\imports\three.min.js" />
     <Content Include="server\message.js" />
     <Content Include="server\node_modules\ws\index.js" />
     <Content Include="server\node_modules\ws\lib\browser.js" />
@@ -91,9 +92,24 @@
     <TypeScriptCompile Include="js\canvas.ts" />
     <TypeScriptCompile Include="js\comms\p2p.ts" />
     <TypeScriptCompile Include="js\comms\socket.ts" />
+    <TypeScriptCompile Include="js\displays\game.ts" />
     <TypeScriptCompile Include="js\displays\logger.ts" />
     <TypeScriptCompile Include="js\main.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\detector.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-canvasrenderer.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-copyshader.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-css3drenderer.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-effectcomposer.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-maskpass.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-orbitcontrols.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-projector.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-renderpass.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-shaderpass.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three-trackballcontrols.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\threejs\three.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\typescript\typescript.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\webaudioapi\waa.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\webrtc\MediaStream.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\webrtc\RTCPeerConnection.d.ts" />
   </ItemGroup>
@@ -114,10 +130,9 @@
     <Content Include="server\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="js\libs\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptOutFile>js/@script.js</TypeScriptOutFile>

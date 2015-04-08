@@ -129,6 +129,7 @@ function sendToServer(type, message) {
     var newItem = Message(type, message);
     socket.send(newItem.asString());
 }
+var scene = new THREE.Scene();
 var Logger = function () {
     var self = this;
     self.height = canvas.height;
