@@ -21,7 +21,7 @@ scene.add(cube);
 scene.add(egh);
 
 var geometry2 = new THREE.PlaneGeometry( 5, 20, 32 );
-var material = new THREE.MeshBasicMaterial( {color: 0xff0000, side: THREE.DoubleSide} );
+var material = new THREE.MeshBasicMaterial( {color: 0xbedcc8, side: THREE.DoubleSide} );
 var plane = new THREE.Mesh( geometry2, material);
 plane.rotation.x += Math.PI / 2;
 scene.add( plane );
@@ -33,7 +33,24 @@ renderer.render( scene, camera );
 //controls.addEventListener('change', render);
 //controls.update();
 function render() {
+    cameraUpdate();
     renderer.render(scene, camera);
     window.requestAnimationFrame(render);
 }
 render();
+
+function cameraUpdate() {
+    var speed = 0.05;
+    if(KEYSPRESSED.W){
+        camera.translateZ(-speed);
+    }
+    if (KEYSPRESSED.S){
+        camera.translateZ(speed);
+    }
+    if (KEYSPRESSED.A){
+        camera.translateX(-speed);
+    }
+    if (KEYSPRESSED.D){
+        camera.translateX(speed);
+    }
+}

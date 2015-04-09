@@ -101,8 +101,11 @@
     <TypeScriptCompile Include="js\canvas.ts" />
     <TypeScriptCompile Include="js\comms\p2p.ts" />
     <TypeScriptCompile Include="js\comms\socket.ts" />
+    <TypeScriptCompile Include="js\controls\keyboard.ts" />
+    <TypeScriptCompile Include="js\controls\mouse.ts" />
     <TypeScriptCompile Include="js\displays\game.ts" />
     <TypeScriptCompile Include="js\displays\logger.ts" />
+    <TypeScriptCompile Include="js\lib\pointerlock.d.ts" />
     <TypeScriptCompile Include="js\main.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
     <TypeScriptCompile Include="Scripts\typings\threejs\detector.d.ts" />
