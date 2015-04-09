@@ -133,7 +133,8 @@ var KEYSPRESSED = {
     W: false,
     A: false,
     S: false,
-    D: false
+    D: false,
+    C: false,
 };
 window.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -148,6 +149,9 @@ window.onkeydown = function (e) {
             break;
         case 68:
             KEYSPRESSED.D = true;
+            break;
+        case 67:
+            KEYSPRESSED.C = true;
             break;
         default:
             console.log(e.keyCode);
@@ -167,6 +171,9 @@ window.onkeyup = function (e) {
         case 68:
             KEYSPRESSED.D = false;
             break;
+        case 67:
+            KEYSPRESSED.C = false;
+            break;
         default:
     }
 };
@@ -181,7 +188,7 @@ element.onclick = function () {
 document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
 document.exitPointerLock();
 function moveCallback(e) {
-    camera.rotation.x -= e.movementY / 100;
+    //camera.rotation.x -= e.movementY / 100;
     camera.rotation.y -= e.movementX / 100;
 }
 function changeCallback(e) {
@@ -233,6 +240,12 @@ renderer.render(scene, camera);
 //controls.addEventListener('change', render);
 //controls.update();
 function render() {
+    if (KEYSPRESSED.C) {
+        camera.position.y = 0.25;
+    }
+    else {
+        camera.position.y = 0.5;
+    }
     cameraUpdate();
     renderer.render(scene, camera);
     window.requestAnimationFrame(render);

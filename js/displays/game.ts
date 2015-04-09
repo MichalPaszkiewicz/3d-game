@@ -33,6 +33,12 @@ renderer.render( scene, camera );
 //controls.addEventListener('change', render);
 //controls.update();
 function render() {
+    if (KEYSPRESSED.C) {
+        camera.position.y = 0.25;
+    }
+    else {
+        camera.position.y = 0.5;
+    }
     cameraUpdate();
     renderer.render(scene, camera);
     window.requestAnimationFrame(render);

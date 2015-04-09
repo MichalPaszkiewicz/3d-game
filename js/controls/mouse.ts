@@ -19,7 +19,7 @@ document.webkitExitPointerLock;
 document.exitPointerLock();
 
 function moveCallback(e) {
-    camera.rotation.x -= e.movementY / 100;
+    //camera.rotation.x -= e.movementY / 100;
     camera.rotation.y -= e.movementX / 100;
 }
 
