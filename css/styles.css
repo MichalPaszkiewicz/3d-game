@@ -1,4 +1,7 @@
-﻿body #my-canvas {
+﻿body {
+  background: #b1d1d5;
+}
+body #my-canvas {
   z-index: 10;
 }
 /*# sourceMappingURL=styles.css.map */

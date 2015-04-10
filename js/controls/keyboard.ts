@@ -4,6 +4,7 @@
     S: false,
     D: false,
     C: false,
+    SHIFT: false
 };
 
 window.onkeydown = function (e) {
@@ -27,6 +28,10 @@ window.onkeydown = function (e) {
         // ctrl
         case 67:
             KEYSPRESSED.C = true;
+            break;
+        // shift
+        case 16:
+            KEYSPRESSED.SHIFT = true;
             break;
         default:
             console.log(e.keyCode);
@@ -54,6 +59,9 @@ window.onkeyup = function (e) {
         // ctrl
         case 67:
             KEYSPRESSED.C = false;
+            break;
+        case 16:
+            KEYSPRESSED.SHIFT = false;
             break;
         default:
             //console.log(e.keyCode);

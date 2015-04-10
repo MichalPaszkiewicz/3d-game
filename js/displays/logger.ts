@@ -30,6 +30,4 @@ var currentLog = new Logger();
 
 function log(text : string, colour?: string) {
     currentLog.log(text, colour);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    currentLog.drawLog();
 }

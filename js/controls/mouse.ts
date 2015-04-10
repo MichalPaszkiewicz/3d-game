@@ -23,20 +23,25 @@ function moveCallback(e) {
     camera.rotation.y -= e.movementX / 100;
 }
 
-function changeCallback(e) {
-    console.log(e);
+function clickCallback() {
+    fire();
+}
 
+function changeCallback(e) {
     if (document.pointerLockElement === element ||
         document.mozPointerLockElement === element ||
         document.webkitPointerLockElement === element) {
         // Pointer was just locked
         // Enable the mousemove listener
         document.addEventListener("mousemove", moveCallback, false);
+
+        document.addEventListener("mousedown", clickCallback, false);
     } else {
         // Pointer was just unlocked
         // Disable the mousemove listener
         document.removeEventListener("mousemove", moveCallback, false);
-        this.unlockHook(this.element);
+
+        document.removeEventListener("mousedown", clickCallback, false);
     }
 }
 

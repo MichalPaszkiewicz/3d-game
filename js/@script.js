@@ -135,6 +135,7 @@ var KEYSPRESSED = {
     S: false,
     D: false,
     C: false,
+    SHIFT: false
 };
 window.onkeydown = function (e) {
     switch (e.keyCode) {
@@ -152,6 +153,9 @@ window.onkeydown = function (e) {
             break;
         case 67:
             KEYSPRESSED.C = true;
+            break;
+        case 16:
+            KEYSPRESSED.SHIFT = true;
             break;
         default:
             console.log(e.keyCode);
@@ -174,6 +178,9 @@ window.onkeyup = function (e) {
         case 67:
             KEYSPRESSED.C = false;
             break;
+        case 16:
+            KEYSPRESSED.SHIFT = false;
+            break;
         default:
     }
 };
@@ -191,18 +198,21 @@ function moveCallback(e) {
     //camera.rotation.x -= e.movementY / 100;
     camera.rotation.y -= e.movementX / 100;
 }
+function clickCallback() {
+    fire();
+}
 function changeCallback(e) {
-    console.log(e);
     if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
         // Pointer was just locked
         // Enable the mousemove listener
         document.addEventListener("mousemove", moveCallback, false);
+        document.addEventListener("mousedown", clickCallback, false);
     }
     else {
         // Pointer was just unlocked
         // Disable the mousemove listener
         document.removeEventListener("mousemove", moveCallback, false);
-        this.unlockHook(this.element);
+        document.removeEventListener("mousedown", clickCallback, false);
     }
 }
 // Hook pointer lock state change events
@@ -215,6 +225,22 @@ function errorCallback(e) {
 document.addEventListener('pointerlockerror', errorCallback, false);
 document.addEventListener('mozpointerlockerror', errorCallback, false);
 document.addEventListener('webkitpointerlockerror', errorCallback, false);
+function drawEnergyBar() {
+    if (energy != null) {
+        ctx.beginPath();
+        ctx.fillStyle = "blue";
+        ctx.fillRect(canvas.width - 110, canvas.height - 20, energy, 10);
+        ctx.strokeRect(canvas.width - 110, canvas.height - 20, 100, 10);
+    }
+}
+function drawHealthBar() {
+    if (health != null) {
+        ctx.beginPath();
+        ctx.fillStyle = "red";
+        ctx.fillRect(canvas.width - 110, canvas.height - 35, health, 10);
+        ctx.strokeRect(canvas.width - 110, canvas.height - 35, 100, 10);
+    }
+}
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 500;
@@ -229,8 +255,8 @@ cube.translateY(0.5);
 var egh = new THREE.EdgesHelper(cube, 0x000000);
 scene.add(cube);
 scene.add(egh);
-var geometry2 = new THREE.PlaneGeometry(5, 20, 32);
-var material = new THREE.MeshBasicMaterial({ color: 0xbedcc8, side: THREE.DoubleSide });
+var geometry2 = new THREE.PlaneGeometry(20, 20, 32);
+var material = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
 var plane = new THREE.Mesh(geometry2, material);
 plane.rotation.x += Math.PI / 2;
 scene.add(plane);
@@ -246,25 +272,92 @@ function render() {
     else {
         camera.position.y = 0.5;
     }
+    if (bullets != null) {
+        updateAllBullets();
+    }
     cameraUpdate();
     renderer.render(scene, camera);
+    if (currentLog != null) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currentLog.drawLog();
+        drawEnergyBar();
+        drawHealthBar();
+    }
     window.requestAnimationFrame(render);
 }
 render();
+function speed() {
+    if (KEYSPRESSED.C) {
+        return 0.01;
+    }
+    if (KEYSPRESSED.SHIFT) {
+        if (canRun()) {
+            return 0.08;
+        }
+    }
+    else {
+        Rest();
+    }
+    return 0.03;
+}
+var health = 100;
+var energy = 100;
+function canRun() {
+    if (energy > 0) {
+        energy -= 3;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function Rest() {
+    if (energy < 100) {
+        energy++;
+    }
+}
 function cameraUpdate() {
-    var speed = 0.05;
+    var currentSpeed = speed();
     if (KEYSPRESSED.W) {
-        camera.translateZ(-speed);
+        camera.translateZ(-currentSpeed);
     }
     if (KEYSPRESSED.S) {
-        camera.translateZ(speed);
+        camera.translateZ(currentSpeed);
     }
     if (KEYSPRESSED.A) {
-        camera.translateX(-speed);
+        camera.translateX(-currentSpeed);
     }
     if (KEYSPRESSED.D) {
-        camera.translateX(speed);
+        camera.translateX(currentSpeed);
     }
+}
+var bullets = [];
+var bulletSpeed = 0.1;
+var updateAllBullets = function () {
+    for (var i = 0; i < bullets.length; i++) {
+        bullets[i].updatePosition();
+    }
+};
+var bullet = function (mesh) {
+    this.mesh = mesh;
+    var vector = new THREE.Vector3(0, 0, -1);
+    vector.applyQuaternion(camera.quaternion);
+    this.velocity = vector;
+    this.updatePosition = function () {
+        this.mesh.position.x += this.velocity.x * bulletSpeed;
+        this.mesh.position.y += this.velocity.y * bulletSpeed;
+        this.mesh.position.z += this.velocity.z * bulletSpeed;
+    };
+};
+function fire() {
+    var circleGeometry = new THREE.SphereGeometry(0.02);
+    var bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var tempBullet = new THREE.Mesh(circleGeometry, bulletMaterial);
+    tempBullet.position.x = camera.position.x;
+    tempBullet.position.y = camera.position.y;
+    tempBullet.position.z = camera.position.z;
+    bullets.push(new bullet(tempBullet));
+    scene.add(tempBullet);
 }
 var Logger = function () {
     var self = this;
@@ -294,8 +387,6 @@ var Logger = function () {
 var currentLog = new Logger();
 function log(text, colour) {
     currentLog.log(text, colour);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    currentLog.drawLog();
 }
 function serverChat(message) {
     sendToServer("chat", message);
