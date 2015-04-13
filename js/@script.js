@@ -34,6 +34,7 @@ var sdpConstraints = {
     }
 };
 function sendOffer() {
+    "use strict";
     peerConnection.createOffer(function (sdp) {
         peerConnection.setLocalDescription(sdp);
         sendToServer("offer", { from: myID, offer: sdp });
@@ -41,11 +42,15 @@ function sendOffer() {
     }, null, sdpConstraints);
 }
 function processIce(iceCandidate) {
+    "use strict";
     peerConnection.addIceCandidate(new RTCIceCandidate(iceCandidate), function () {
+        //todo: do something in here
     }, function () {
+        //todo: do something in here
     });
 }
 function processAnswer(answer) {
+    "use strict";
     peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     log("------ PROCESSED ANSWER ------");
 }
@@ -60,6 +65,10 @@ function handleOffer(offer) {
 }
 var serverString = "ws:localhost:8080";
 var myID = Math.random().toString(16).replace('0.', '');
+var socket = new WebSocket(serverString);
+socket.onopen = Sonopen;
+socket.onmessage = Sonmessage;
+socket.onclose = Sonclose;
 function SocketManager() {
     var self = this;
     self.retries = 10;
@@ -74,14 +83,11 @@ function SocketManager() {
             socket.onclose = Sonclose;
         }
         catch (e) {
+            log(e.message);
         }
     };
     return self;
 }
-var socket = new WebSocket(serverString);
-socket.onopen = Sonopen;
-socket.onmessage = Sonmessage;
-socket.onclose = Sonclose;
 var socketManager = SocketManager();
 function Sonopen() {
     log("connected to WebSocket");

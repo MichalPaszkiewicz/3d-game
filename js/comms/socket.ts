@@ -2,6 +2,12 @@
 
 var myID = Math.random().toString(16).replace('0.', '');
 
+var socket = new WebSocket(serverString);
+
+socket.onopen = Sonopen;
+socket.onmessage = Sonmessage;
+socket.onclose = Sonclose;
+
 function SocketManager() {
     var self = this;
     self.retries = 10;
@@ -17,18 +23,12 @@ function SocketManager() {
             socket.onclose = Sonclose;
         }
         catch (e) {
-
+            log(e.message);
         }
-    }
+    };
 
     return self;
 }
-
-var socket = new WebSocket(serverString);
-
-socket.onopen = Sonopen;
-socket.onmessage = Sonmessage;
-socket.onclose = Sonclose;
 
 var socketManager = SocketManager();
 
@@ -38,7 +38,7 @@ function Sonopen() {
     socketManager.currentRetries = 0;
 }
 
-function Sonmessage(msg) {
+function Sonmessage(msg : any) {
     var data = msg.data;
     var dataJSON = JSON.parse(data);
 
@@ -76,11 +76,11 @@ function Sonclose() {
     }
     else {
         socketManager.currentRetries = 0;
-        log("reconnection aborted.", "red")
+        log("reconnection aborted.", "red");
     }
 }
 
-function sendToServer(type, message) {
+function sendToServer(type : string, message : string | Object) {
     var newItem = Message(type, message);
     socket.send(newItem.asString());
 } 
