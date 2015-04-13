@@ -160,6 +160,9 @@
       <DependentUpon>base.css</DependentUpon>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="js\models\baymax.json" />
+  </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptOutFile>js/@script.js</TypeScriptOutFile>
   </PropertyGroup>

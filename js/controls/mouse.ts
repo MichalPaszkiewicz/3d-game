@@ -8,7 +8,6 @@ element.requestPointerLock = element.requestPointerLock ||
 element.mozRequestPointerLock ||
 element.webkitRequestPointerLock;
 // Ask the browser to lock the pointer
-
 element.onclick = function () {
     element.requestPointerLock();
 };
@@ -20,10 +19,14 @@ document.exitPointerLock();
 
 var cameraXAxis = new THREE.Vector3(1, 0, 0);
 var rotationYAxis = new THREE.Vector3(0, 1, 0);
+var fullRotationX = 0;
 
 function moveCallback(e) {
-    camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
-    rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
+    if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
+        camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
+        rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
+        fullRotationX -= e.movementY / 100;
+    }
     camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
 }
 

@@ -196,9 +196,13 @@ document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLo
 document.exitPointerLock();
 var cameraXAxis = new THREE.Vector3(1, 0, 0);
 var rotationYAxis = new THREE.Vector3(0, 1, 0);
+var fullRotationX = 0;
 function moveCallback(e) {
-    camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
-    rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
+    if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
+        camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
+        rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
+        fullRotationX -= e.movementY / 100;
+    }
     camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
 }
 function clickCallback() {
@@ -363,6 +367,18 @@ function fire() {
     bullets.push(new bullet(tempBullet));
     scene.add(tempBullet);
 }
+function drawPerson() {
+    var loader = new THREE.ObjectLoader();
+    loader.load("js/models/baymax.json", function (obj) {
+        obj.scale.x = 0.01;
+        obj.scale.y = 0.01;
+        obj.scale.z = 0.01;
+        obj.translateX(2);
+        obj.translateY(1);
+        scene.add(obj);
+    });
+}
+drawPerson();
 var Logger = function () {
     var self = this;
     self.height = canvas.height;

@@ -142,3 +142,18 @@ function fire() {
     bullets.push(new bullet(tempBullet));
     scene.add(tempBullet);
 }
+
+
+function drawPerson() {
+    var loader = new THREE.ObjectLoader();
+    loader.load("js/models/baymax.json", function (obj) {
+        obj.scale.x = 0.01;
+        obj.scale.y = 0.01;
+        obj.scale.z = 0.01;
+        obj.translateX(2);
+        obj.translateY(1);
+        scene.add(obj);
+    });
+}
+
+drawPerson();
