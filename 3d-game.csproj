@@ -104,6 +104,7 @@
     <TypeScriptCompile Include="js\controls\keyboard.ts" />
     <TypeScriptCompile Include="js\controls\mouse.ts" />
     <TypeScriptCompile Include="js\displays\bars.ts" />
+    <TypeScriptCompile Include="js\displays\crosshair.ts" />
     <TypeScriptCompile Include="js\displays\game.ts" />
     <TypeScriptCompile Include="js\displays\logger.ts" />
     <TypeScriptCompile Include="js\lib\pointerlock.d.ts" />

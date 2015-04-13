@@ -52,6 +52,7 @@ function render() {
         currentLog.drawLog();
         drawEnergyBar();
         drawHealthBar();
+        drawCrossHair();
     }
 
     window.requestAnimationFrame(render);
