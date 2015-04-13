@@ -194,9 +194,12 @@ element.onclick = function () {
 // Ask the browser to release the pointer
 document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
 document.exitPointerLock();
+var cameraXAxis = new THREE.Vector3(1, 0, 0);
+var rotationYAxis = new THREE.Vector3(0, 1, 0);
 function moveCallback(e) {
-    //camera.rotation.x -= e.movementY / 100;
-    camera.rotation.y -= e.movementX / 100;
+    camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
+    rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
+    camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
 }
 function clickCallback() {
     fire();
