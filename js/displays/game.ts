@@ -47,12 +47,13 @@ function render() {
     cameraUpdate();
     renderer.render(scene, camera);
 
-    if (currentLog != null) {
+    if (currentLog != null && canvasNeedsUpdate) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         currentLog.drawLog();
         drawEnergyBar();
         drawHealthBar();
         drawCrossHair();
+        canvasNeedsUpdate = false;
     }
 
     window.requestAnimationFrame(render);
@@ -81,7 +82,8 @@ var energy = 100;
 
 function canRun() {
     if (energy > 0) {
-        energy-=3;
+        energy -= 3;
+        canvasNeedsUpdate = true;
         return true;
     }
     else {
@@ -92,6 +94,7 @@ function canRun() {
 function Rest() {
     if (energy < 100) {
         energy++;
+        canvasNeedsUpdate = true;
     }
 }
 

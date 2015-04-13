@@ -2,6 +2,8 @@ var canvas = document.getElementById("my-canvas");
 canvas.width = canvas.parentElement.offsetWidth;
 canvas.height = canvas.parentElement.offsetHeight;
 var ctx = canvas.getContext("2d");
+//canvas is only redrawn when this is set to true.
+var canvasNeedsUpdate = false;
 var config = { "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] };
 var connection = {
     'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }]
@@ -301,12 +303,13 @@ function render() {
     }
     cameraUpdate();
     renderer.render(scene, camera);
-    if (currentLog != null) {
+    if (currentLog != null && canvasNeedsUpdate) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         currentLog.drawLog();
         drawEnergyBar();
         drawHealthBar();
         drawCrossHair();
+        canvasNeedsUpdate = false;
     }
     window.requestAnimationFrame(render);
 }
@@ -330,6 +333,7 @@ var energy = 100;
 function canRun() {
     if (energy > 0) {
         energy -= 3;
+        canvasNeedsUpdate = true;
         return true;
     }
     else {
@@ -339,6 +343,7 @@ function canRun() {
 function Rest() {
     if (energy < 100) {
         energy++;
+        canvasNeedsUpdate = true;
     }
 }
 function cameraUpdate() {
@@ -425,6 +430,7 @@ var Logger = function () {
 var currentLog = new Logger();
 function log(text, colour) {
     currentLog.log(text, colour);
+    canvasNeedsUpdate = true;
 }
 function serverChat(message) {
     sendToServer("chat", message);

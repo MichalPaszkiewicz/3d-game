@@ -30,4 +30,5 @@ var currentLog = new Logger();
 
 function log(text : string, colour?: string) {
     currentLog.log(text, colour);
+    canvasNeedsUpdate = true;
 }
