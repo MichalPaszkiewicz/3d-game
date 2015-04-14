@@ -1,6 +1,4 @@
 ﻿module App.Control {
-    import camera = App.Display.camera;
-    import fire = App.Display.fire;
 
     var havePointerLock = "pointerLockElement" in document ||
         "mozPointerLockElement" in document ||
@@ -27,15 +25,15 @@
 
     function moveCallback(e) {
         if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
-            camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
+            App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
             rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
             fullRotationX -= e.movementY / 100;
         }
-        camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
+        App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
     }
 
     function clickCallback() {
-        fire();
+        App.Display.fire();
     }
 
     function changeCallback(e) {

@@ -1,4 +1,5 @@
-﻿module App.Comms {
+﻿/// <reference path="../displays/logger.ts" />
+module App.Comms {
     import log = Display.log;
 
     export var config = { "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] };

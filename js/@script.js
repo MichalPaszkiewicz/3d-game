@@ -9,6 +9,44 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    var Display;
+    (function (Display) {
+        var Logger = function () {
+            var self = this;
+            self.height = App.canvas.height;
+            self.logs = [];
+            self.log = function (text, colour) {
+                if (colour == null) {
+                    colour = "black";
+                }
+                self.logs.push({ text: text, colour: colour });
+            };
+            self.drawLog = function () {
+                var cutoff = 0;
+                if (10 * self.logs.length + 10 > self.height) {
+                    cutoff = 10 * self.logs.length + 10 - self.height;
+                }
+                for (var i = 0; i < self.logs.length; i++) {
+                    App.ctx.fillStyle = self.logs[i].colour;
+                    App.ctx.fillText(self.logs[i].text, 10, 10 * i + 10 - cutoff);
+                }
+            };
+            self.clearLog = function () {
+                self.logs = [];
+            };
+            return self;
+        };
+        Display.currentLog = new Logger();
+        function log(text, colour) {
+            Display.currentLog.log(text, colour);
+            App.canvasNeedsUpdate = true;
+        }
+        Display.log = log;
+    })(Display = App.Display || (App.Display = {}));
+})(App || (App = {}));
+/// <reference path="../displays/logger.ts" />
+var App;
+(function (App) {
     var Comms;
     (function (Comms) {
         var log = App.Display.log;
@@ -225,8 +263,6 @@ var App;
 (function (App) {
     var Control;
     (function (Control) {
-        var camera = App.Display.camera;
-        var fire = App.Display.fire;
         var havePointerLock = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
         var element = document.body;
         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
@@ -242,14 +278,14 @@ var App;
         var fullRotationX = 0;
         function moveCallback(e) {
             if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
-                camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
+                App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
                 rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
                 fullRotationX -= e.movementY / 100;
             }
-            camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
+            App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
         }
         function clickCallback() {
-            fire();
+            App.Display.fire();
         }
         function changeCallback(e) {
             if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
@@ -279,24 +315,31 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    var ME;
+    (function (ME) {
+        ME.energy = 100;
+        ME.health = 100;
+    })(ME = App.ME || (App.ME = {}));
+})(App || (App = {}));
+/// <reference path="../objects/me.ts" />
+var App;
+(function (App) {
     var Display;
     (function (Display) {
-        var health = App.ME.health;
-        var energy = App.ME.energy;
         function drawEnergyBar() {
-            if (energy != null) {
+            if (App.ME.energy != null) {
                 App.ctx.beginPath();
                 App.ctx.fillStyle = "blue";
-                App.ctx.fillRect(App.canvas.width - 110, App.canvas.height - 20, energy, 10);
+                App.ctx.fillRect(App.canvas.width - 110, App.canvas.height - 20, App.ME.energy, 10);
                 App.ctx.strokeRect(App.canvas.width - 110, App.canvas.height - 20, 100, 10);
             }
         }
         Display.drawEnergyBar = drawEnergyBar;
         function drawHealthBar() {
-            if (health != null) {
+            if (App.ME.health != null) {
                 App.ctx.beginPath();
                 App.ctx.fillStyle = "red";
-                App.ctx.fillRect(App.canvas.width - 110, App.canvas.height - 35, health, 10);
+                App.ctx.fillRect(App.canvas.width - 110, App.canvas.height - 35, App.ME.health, 10);
                 App.ctx.strokeRect(App.canvas.width - 110, App.canvas.height - 35, 100, 10);
             }
         }
@@ -498,43 +541,6 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
-    var Display;
-    (function (Display) {
-        var Logger = function () {
-            var self = this;
-            self.height = App.canvas.height;
-            self.logs = [];
-            self.log = function (text, colour) {
-                if (colour == null) {
-                    colour = "black";
-                }
-                self.logs.push({ text: text, colour: colour });
-            };
-            self.drawLog = function () {
-                var cutoff = 0;
-                if (10 * self.logs.length + 10 > self.height) {
-                    cutoff = 10 * self.logs.length + 10 - self.height;
-                }
-                for (var i = 0; i < self.logs.length; i++) {
-                    App.ctx.fillStyle = self.logs[i].colour;
-                    App.ctx.fillText(self.logs[i].text, 10, 10 * i + 10 - cutoff);
-                }
-            };
-            self.clearLog = function () {
-                self.logs = [];
-            };
-            return self;
-        };
-        Display.currentLog = new Logger();
-        function log(text, colour) {
-            Display.currentLog.log(text, colour);
-            App.canvasNeedsUpdate = true;
-        }
-        Display.log = log;
-    })(Display = App.Display || (App.Display = {}));
-})(App || (App = {}));
-var App;
-(function (App) {
     function serverChat(message) {
         App.Comms.sendToServer("chat", message);
         App.Display.log("me: " + message);
@@ -573,14 +579,6 @@ var App;
         }
         Combat.bullet = bullet;
     })(Combat = App.Combat || (App.Combat = {}));
-})(App || (App = {}));
-var App;
-(function (App) {
-    var ME;
-    (function (ME) {
-        ME.energy = 100;
-        ME.health = 100;
-    })(ME = App.ME || (App.ME = {}));
 })(App || (App = {}));
 var App;
 (function (App) {
