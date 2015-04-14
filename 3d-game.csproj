@@ -109,7 +109,10 @@
     <TypeScriptCompile Include="js\displays\logger.ts" />
     <TypeScriptCompile Include="js\lib\pointerlock.d.ts" />
     <TypeScriptCompile Include="js\main.ts" />
+    <TypeScriptCompile Include="js\objects\bullet.ts" />
+    <TypeScriptCompile Include="js\objects\me.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
+    <TypeScriptCompile Include="js\objects\weapon.ts" />
     <TypeScriptCompile Include="Scripts\typings\threejs\detector.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\threejs\three-canvasrenderer.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\threejs\three-copyshader.d.ts" />
