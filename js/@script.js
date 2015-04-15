@@ -462,7 +462,7 @@ var App;
             else {
                 Display.camera.position.y = 0.5;
             }
-            if (bullets != null && updateAllBullets != null) {
+            if (Display.bullets != null && updateAllBullets != null) {
                 updateAllBullets();
             }
             cameraUpdate();
@@ -542,14 +542,24 @@ var App;
             }
         }
         sendThePosition();
-        var bullets = [];
+        Display.bullets = [];
         var updateAllBullets = function () {
-            for (var i = 0; i < bullets.length; i++) {
-                bullets[i].updatePosition();
+            for (var i = 0; i < Display.bullets.length; i++) {
+                Display.bullets[i].updatePosition();
             }
+            var newBullets = [];
+            for (var i = 0; i < Display.bullets.length; i++) {
+                if (Display.bullets[i].age >= Display.bullets[i].settings.lifeSpan) {
+                    Display.scene.remove(Display.bullets[i].mesh);
+                }
+                else {
+                    newBullets.push(Display.bullets[i]);
+                }
+            }
+            Display.bullets = newBullets;
         };
         function addBullet(bullet) {
-            bullets.push(bullet);
+            Display.bullets.push(bullet);
         }
         Display.addBullet = addBullet;
         function fire() {
@@ -669,9 +679,10 @@ var App;
         })(Combat.BulletType || (Combat.BulletType = {}));
         var BulletType = Combat.BulletType;
         var BulletSetting = (function () {
-            function BulletSetting(speed, damage) {
+            function BulletSetting(speed, damage, lifeSpan) {
                 this.bulletSpeed = speed;
                 this.damage = damage;
+                this.lifeSpan = lifeSpan;
             }
             return BulletSetting;
         })();
@@ -679,7 +690,7 @@ var App;
             switch (type) {
                 case 0 /* NORMAL */:
                 default:
-                    return new BulletSetting(0.1, 10);
+                    return new BulletSetting(0.1, 10, 100);
             }
         }
         function getBulletMesh(type) {
@@ -706,6 +717,7 @@ var App;
                     this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
                     this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
                     this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
+                    this.age++;
                 };
             }
             return Bullet;
@@ -720,6 +732,7 @@ var App;
                     this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
                     this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
                     this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
+                    this.age++;
                 };
             }
             return ImportBullet;

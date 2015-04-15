@@ -10,10 +10,12 @@
     class BulletSetting {
         bulletSpeed: number;
         damage: number;
+        lifeSpan: number;
 
-        constructor(speed: number, damage: number) {
+        constructor(speed: number, damage: number, lifeSpan: number) {
             this.bulletSpeed = speed;
             this.damage = damage;
+            this.lifeSpan = lifeSpan;
         }
     }
 
@@ -21,7 +23,7 @@
         switch (type) {
             case BulletType.NORMAL:
             default:
-                return new BulletSetting(0.1, 10);
+                return new BulletSetting(0.1, 10, 100);
         }
     }
 
@@ -58,6 +60,7 @@
                 this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
                 this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
                 this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
+                this.age++;
             };
         }
     }
@@ -70,6 +73,7 @@
                 this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
                 this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
                 this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
+                this.age++;
             };
         }
     }

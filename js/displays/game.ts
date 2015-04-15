@@ -137,12 +137,24 @@
     }
     sendThePosition();
 
-    var bullets = [];
+    export var bullets = [];
 
     var updateAllBullets = function () {
         for (var i = 0; i < bullets.length; i++) {
             bullets[i].updatePosition();
         }
+
+        var newBullets = [];
+        for (var i = 0; i < bullets.length; i++) {
+            if (bullets[i].age >= bullets[i].settings.lifeSpan) {
+                scene.remove(bullets[i].mesh);
+            }
+            else {
+                newBullets.push(bullets[i]);
+            }
+        }
+
+        bullets = newBullets;
     };
 
     export function addBullet(bullet) {
