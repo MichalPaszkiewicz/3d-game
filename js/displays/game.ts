@@ -1,7 +1,7 @@
 ﻿module App.Display {
     import KEYSPRESSED = Control.KEYSPRESSED;
 
-    var scene = new THREE.Scene();
+    export var scene = new THREE.Scene();
 
     export var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 500;
@@ -32,6 +32,8 @@
     camera.position.z = 5;
     renderer.render(scene, camera);
 
+
+
     // var controls = new THREE.OrbitControls(camera);
     // controls.addEventListener('change', render);
     // controls.update();
@@ -48,6 +50,7 @@
         }
 
         cameraUpdate();
+
         renderer.render(scene, camera);
 
         if (currentLog != null && canvasNeedsUpdate) {
@@ -123,7 +126,7 @@
     };
 
     export function fire() {
-        bullets.push(App.Combat.addBulletType(App.Combat.bulletType.NORMAL, scene, camera));
+        bullets.push(App.Combat.addBulletType(App.Combat.BulletType.NORMAL, scene, camera));
     }
 
     function drawPerson() {

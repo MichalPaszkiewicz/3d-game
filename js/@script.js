@@ -412,7 +412,7 @@ var App;
     var Display;
     (function (Display) {
         var KEYSPRESSED = App.Control.KEYSPRESSED;
-        var scene = new THREE.Scene();
+        Display.scene = new THREE.Scene();
         Display.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         Display.camera.position.z = 500;
         Display.camera.position.y = 0.5;
@@ -424,15 +424,15 @@ var App;
         var cube = new THREE.Mesh(geometry, material);
         cube.translateY(0.5);
         var egh = new THREE.EdgesHelper(cube, 0x000000);
-        scene.add(cube);
-        scene.add(egh);
+        Display.scene.add(cube);
+        Display.scene.add(egh);
         var geometry2 = new THREE.PlaneGeometry(20, 20, 32);
         var material2 = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
         var plane = new THREE.Mesh(geometry2, material2);
         plane.rotation.x += Math.PI / 2;
-        scene.add(plane);
+        Display.scene.add(plane);
         Display.camera.position.z = 5;
-        renderer.render(scene, Display.camera);
+        renderer.render(Display.scene, Display.camera);
         // var controls = new THREE.OrbitControls(camera);
         // controls.addEventListener('change', render);
         // controls.update();
@@ -447,7 +447,7 @@ var App;
                 updateAllBullets();
             }
             cameraUpdate();
-            renderer.render(scene, Display.camera);
+            renderer.render(Display.scene, Display.camera);
             if (Display.currentLog != null && App.canvasNeedsUpdate) {
                 App.ctx.clearRect(0, 0, App.canvas.width, App.canvas.height);
                 Display.currentLog.drawLog();
@@ -511,7 +511,7 @@ var App;
             }
         };
         function fire() {
-            bullets.push(App.Combat.addBulletType(0 /* NORMAL */, scene, Display.camera));
+            bullets.push(App.Combat.addBulletType(0 /* NORMAL */, Display.scene, Display.camera));
         }
         Display.fire = fire;
         function drawPerson() {
@@ -522,13 +522,13 @@ var App;
                 obj.scale.z = 0.01;
                 obj.translateX(2);
                 obj.translateY(1);
-                scene.add(obj);
+                Display.scene.add(obj);
             });
         }
         drawPerson();
         var light = new THREE.PointLight(0xff0000, 1, 100);
         light.position.set(5, 5, 1);
-        scene.add(light);
+        Display.scene.add(light);
     })(Display = App.Display || (App.Display = {}));
 })(App || (App = {}));
 var App;
@@ -550,13 +550,14 @@ var App;
     (function (Combat) {
         var camera = App.Display.camera;
         var bulletSpeed = 0.1;
-        (function (bulletType) {
-            bulletType[bulletType["NORMAL"] = 0] = "NORMAL";
-        })(Combat.bulletType || (Combat.bulletType = {}));
-        var bulletType = Combat.bulletType;
+        (function (BulletType) {
+            BulletType[BulletType["NORMAL"] = 0] = "NORMAL";
+        })(Combat.BulletType || (Combat.BulletType = {}));
+        var BulletType = Combat.BulletType;
         var BulletSetting = (function () {
             function BulletSetting(speed, damage) {
                 this.bulletSpeed = speed;
+                this.damage = damage;
             }
             return BulletSetting;
         })();
@@ -576,14 +577,17 @@ var App;
                     var bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
                     bulletMesh = new THREE.Mesh(circleGeometry, bulletMaterial);
             }
-            bulletMesh.position.x = camera.position.x;
+            var vector = new THREE.Vector3();
+            vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+            bulletMesh.position.x = vector.x;
             // lower the bullet slightly. Will need to be sent from gun later on.
-            bulletMesh.position.y = camera.position.y - 0.05;
-            bulletMesh.position.z = camera.position.z;
+            bulletMesh.position.y = vector.y;
+            bulletMesh.position.z = vector.z;
             return bulletMesh;
         }
         var Bullet = (function () {
-            function Bullet(mesh, ammoType, settings) {
+            function Bullet(ammoType, mesh, settings) {
+                this.type = ammoType;
                 this.mesh = mesh;
                 this.age = 0;
                 this.settings = settings;
@@ -591,16 +595,15 @@ var App;
                 vector.applyQuaternion(camera.quaternion);
                 this.velocity = vector;
                 this.updatePosition = function () {
-                    this.mesh.position.x += this.velocity.x * bulletSpeed;
-                    this.mesh.position.y += this.velocity.y * bulletSpeed;
-                    this.mesh.position.z += this.velocity.z * bulletSpeed;
+                    this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
+                    this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
+                    this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
                 };
             }
             return Bullet;
         })();
         function addBulletType(ammoType, scene, camera) {
-            var bulletMesh = getBulletMesh(ammoType, camera);
-            var bullet = new Bullet(bulletMesh, ammoType, getBulletSettings(ammoType));
+            var bullet = new Bullet(ammoType, getBulletMesh(ammoType, camera), getBulletSettings(ammoType));
             scene.add(bullet.mesh);
             return bullet;
         }
@@ -626,12 +629,71 @@ var App;
 (function (App) {
     var Combat;
     (function (Combat) {
+        (function (WeaponType) {
+            WeaponType[WeaponType["NORMAL"] = 0] = "NORMAL";
+            WeaponType[WeaponType["AUTOMATIC"] = 1] = "AUTOMATIC";
+        })(Combat.WeaponType || (Combat.WeaponType = {}));
+        var WeaponType = Combat.WeaponType;
+        (function (WeaponMode) {
+            WeaponMode[WeaponMode["SEMI_AUTOMATIC"] = 0] = "SEMI_AUTOMATIC";
+            WeaponMode[WeaponMode["AUTOMATIC"] = 1] = "AUTOMATIC";
+        })(Combat.WeaponMode || (Combat.WeaponMode = {}));
+        var WeaponMode = Combat.WeaponMode;
+        function getAmmoType(weaponType) {
+            switch (weaponType) {
+                case 0 /* NORMAL */:
+                case 1 /* AUTOMATIC */:
+                default:
+                    return 0 /* NORMAL */;
+            }
+        }
+        function getWeaponMesh(weaponType, camera) {
+            var weaponMesh;
+            switch (weaponType) {
+                case 1 /* AUTOMATIC */:
+                case 0 /* NORMAL */:
+                default:
+                    var geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+                    var material = new THREE.MeshBasicMaterial({ color: 0xbbbbbb });
+                    weaponMesh = new THREE.Mesh(geometry, material);
+            }
+            return weaponMesh;
+        }
+        var WeaponSetting = (function () {
+            function WeaponSetting(weaponMode) {
+                this.weaponMode = weaponMode;
+            }
+            return WeaponSetting;
+        })();
+        function getWeaponSettings(weaponType) {
+            switch (weaponType) {
+                case 1 /* AUTOMATIC */:
+                    return new WeaponSetting(1 /* AUTOMATIC */);
+                case 0 /* NORMAL */:
+                default:
+                    return new WeaponSetting(0 /* SEMI_AUTOMATIC */);
+            }
+        }
         var Weapon = (function () {
-            function Weapon() {
+            function Weapon(weaponType, weaponMesh, weaponSettings) {
+                var self = this;
+                this.weaponType = weaponType;
+                this.ammoType = getAmmoType(weaponType);
+                this.mesh = weaponMesh;
+                this.settings = weaponSettings;
             }
             return Weapon;
         })();
         Combat.Weapon = Weapon;
+        function addWeaponType(weaponType, scene, camera) {
+            var bullet = new Weapon(weaponType, getWeaponMesh(weaponType, camera), getWeaponSettings(weaponType));
+            camera.add(bullet.mesh);
+            bullet.mesh.position.set(0.35, -0.15, -0.25);
+            scene.add(camera);
+            return bullet;
+        }
+        Combat.addWeaponType = addWeaponType;
+        Combat.weapon = Combat.addWeaponType(0 /* NORMAL */, App.Display.scene, App.Display.camera);
     })(Combat = App.Combat || (App.Combat = {}));
 })(App || (App = {}));
 //# sourceMappingURL=@script.js.map
