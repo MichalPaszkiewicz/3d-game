@@ -45,7 +45,7 @@
             camera.position.y = 0.5;
         }
 
-        if (bullets != null) {
+        if (bullets != null && updateAllBullets != null) {
             updateAllBullets();
         }
 
@@ -101,40 +101,34 @@
         }
     }
 
-    var sendIt = false;
-
     function cameraUpdate() {
         var currentSpeed = speed();
         if (KEYSPRESSED.W) {
             camera.translateZ(-currentSpeed);
-            sendIt = true;
         }
         if (KEYSPRESSED.S) {
             camera.translateZ(currentSpeed);
-            sendIt = true;
         }
         if (KEYSPRESSED.A) {
             camera.translateX(-currentSpeed);
-            sendIt = true;
         }
         if (KEYSPRESSED.D) {
             camera.translateX(currentSpeed);
-            sendIt = true;
         }
     }
 
     function sendThePosition() {
-        if (sendIt && sendGameDataOrKill != null && GameDataType != null && App.Comms.dataChannel.readyState == "open") {
+        if (sendGameDataOrKill != null && GameDataType != null && App.Comms.dataChannel.readyState == "open") {
             try {
                 sendGameDataOrKill(GameDataType.POSITION, {
                     x: camera.position.x,
-                    z: camera.position.z
+                    z: camera.position.z,
+                    d: camera.rotation.y
                 });
             }
             catch (e) {
                 log(e.message, "orange");
             }
-            sendIt = false;
             setTimeout(sendThePosition, 50);
         }
         else {
@@ -186,6 +180,7 @@
     export function handleMovement(pos) {
         otherPerson.position.x = pos.x;
         otherPerson.position.z = pos.z;
+        otherPerson.rotation.y = pos.d;
     }
 
     drawPerson();

@@ -462,7 +462,7 @@ var App;
             else {
                 Display.camera.position.y = 0.5;
             }
-            if (bullets != null) {
+            if (bullets != null && updateAllBullets != null) {
                 updateAllBullets();
             }
             cameraUpdate();
@@ -508,38 +508,33 @@ var App;
                 App.canvasNeedsUpdate = true;
             }
         }
-        var sendIt = false;
         function cameraUpdate() {
             var currentSpeed = speed();
             if (KEYSPRESSED.W) {
                 Display.camera.translateZ(-currentSpeed);
-                sendIt = true;
             }
             if (KEYSPRESSED.S) {
                 Display.camera.translateZ(currentSpeed);
-                sendIt = true;
             }
             if (KEYSPRESSED.A) {
                 Display.camera.translateX(-currentSpeed);
-                sendIt = true;
             }
             if (KEYSPRESSED.D) {
                 Display.camera.translateX(currentSpeed);
-                sendIt = true;
             }
         }
         function sendThePosition() {
-            if (sendIt && App.sendGameDataOrKill != null && App.GameDataType != null && App.Comms.dataChannel.readyState == "open") {
+            if (App.sendGameDataOrKill != null && App.GameDataType != null && App.Comms.dataChannel.readyState == "open") {
                 try {
                     App.sendGameDataOrKill(1 /* POSITION */, {
                         x: Display.camera.position.x,
-                        z: Display.camera.position.z
+                        z: Display.camera.position.z,
+                        d: Display.camera.rotation.y
                     });
                 }
                 catch (e) {
                     Display.log(e.message, "orange");
                 }
-                sendIt = false;
                 setTimeout(sendThePosition, 50);
             }
             else {
@@ -584,6 +579,7 @@ var App;
         function handleMovement(pos) {
             Display.otherPerson.position.x = pos.x;
             Display.otherPerson.position.z = pos.z;
+            Display.otherPerson.rotation.y = pos.d;
         }
         Display.handleMovement = handleMovement;
         drawPerson();

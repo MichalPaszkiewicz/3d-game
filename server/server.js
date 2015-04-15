@@ -94,3 +94,5 @@ wss.on('connection', function (ws) {
 
     console.log("connected");
 });
+
+console.log("server open on: ws:localhost:8080")
