@@ -101,21 +101,47 @@
         }
     }
 
+    var sendIt = false;
+
     function cameraUpdate() {
         var currentSpeed = speed();
         if (KEYSPRESSED.W) {
             camera.translateZ(-currentSpeed);
+            sendIt = true;
         }
         if (KEYSPRESSED.S) {
             camera.translateZ(currentSpeed);
+            sendIt = true;
         }
         if (KEYSPRESSED.A) {
             camera.translateX(-currentSpeed);
+            sendIt = true;
         }
         if (KEYSPRESSED.D) {
             camera.translateX(currentSpeed);
+            sendIt = true;
         }
     }
+
+    function sendThePosition() {
+        if (sendIt && sendGameDataOrKill != null && GameDataType != null && App.Comms.dataChannel.readyState == "open") {
+            try {
+                sendGameDataOrKill(GameDataType.POSITION, {
+                    x: camera.position.x,
+                    z: camera.position.z
+                });
+            }
+            catch (e) {
+                log(e.message, "orange");
+            }
+            sendIt = false;
+            setTimeout(sendThePosition, 50);
+        }
+        else {
+            setTimeout(sendThePosition, 500);
+        }
+    }
+    sendThePosition();
 
     var bullets = [];
 
@@ -140,6 +166,8 @@
         });
     }
 
+    export var otherPerson: THREE.Object3D;
+
     function drawPerson() {
         var loader = new THREE.ObjectLoader();
         loader.load("js/models/baymax.json", function (obj) {
@@ -147,10 +175,17 @@
             obj.scale.y = 0.01;
             obj.scale.z = 0.01;
             obj.translateX(2);
-            obj.translateY(1);
+            obj.translateY(0.75);
+
+            otherPerson = obj;
 
             scene.add(obj);
         });
+    }
+
+    export function handleMovement(pos) {
+        otherPerson.position.x = pos.x;
+        otherPerson.position.z = pos.z;
     }
 
     drawPerson();

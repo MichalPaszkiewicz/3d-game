@@ -508,21 +508,45 @@ var App;
                 App.canvasNeedsUpdate = true;
             }
         }
+        var sendIt = false;
         function cameraUpdate() {
             var currentSpeed = speed();
             if (KEYSPRESSED.W) {
                 Display.camera.translateZ(-currentSpeed);
+                sendIt = true;
             }
             if (KEYSPRESSED.S) {
                 Display.camera.translateZ(currentSpeed);
+                sendIt = true;
             }
             if (KEYSPRESSED.A) {
                 Display.camera.translateX(-currentSpeed);
+                sendIt = true;
             }
             if (KEYSPRESSED.D) {
                 Display.camera.translateX(currentSpeed);
+                sendIt = true;
             }
         }
+        function sendThePosition() {
+            if (sendIt && App.sendGameDataOrKill != null && App.GameDataType != null && App.Comms.dataChannel.readyState == "open") {
+                try {
+                    App.sendGameDataOrKill(1 /* POSITION */, {
+                        x: Display.camera.position.x,
+                        z: Display.camera.position.z
+                    });
+                }
+                catch (e) {
+                    Display.log(e.message, "orange");
+                }
+                sendIt = false;
+                setTimeout(sendThePosition, 50);
+            }
+            else {
+                setTimeout(sendThePosition, 500);
+            }
+        }
+        sendThePosition();
         var bullets = [];
         var updateAllBullets = function () {
             for (var i = 0; i < bullets.length; i++) {
@@ -544,6 +568,7 @@ var App;
             });
         }
         Display.fire = fire;
+        Display.otherPerson;
         function drawPerson() {
             var loader = new THREE.ObjectLoader();
             loader.load("js/models/baymax.json", function (obj) {
@@ -551,10 +576,16 @@ var App;
                 obj.scale.y = 0.01;
                 obj.scale.z = 0.01;
                 obj.translateX(2);
-                obj.translateY(1);
+                obj.translateY(0.75);
+                Display.otherPerson = obj;
                 Display.scene.add(obj);
             });
         }
+        function handleMovement(pos) {
+            Display.otherPerson.position.x = pos.x;
+            Display.otherPerson.position.z = pos.z;
+        }
+        Display.handleMovement = handleMovement;
         drawPerson();
         var light = new THREE.PointLight(0xff0000, 1, 100);
         light.position.set(5, 5, 1);
@@ -595,8 +626,9 @@ var App;
     }
     App.rtcSendOrKill = rtcSendOrKill;
     function sendGameDataOrKill(type, data) {
-        if (App.Comms == null || App.Comms.dataChannel == null || App.Comms.dataChannel.send == null) {
+        if (App.Comms == null || App.Comms.dataChannel == null || App.Comms.dataChannel.send == null || App.Comms.dataChannel.readyState != "open") {
             logOrDefault("MainTS: DataChannel not yet set up", "orange");
+            return;
         }
         var gameData = new App.GameData(type, data);
         var message = App.Message("game", gameData);
@@ -615,7 +647,10 @@ var App;
                 App.Display.scene.add(bullet.mesh);
                 return;
             case 1 /* POSITION */:
+                App.Display.handleMovement(data.data);
+                return;
             default:
+                logOrDefault("Error with processing game data", "orange");
                 return;
         }
     }

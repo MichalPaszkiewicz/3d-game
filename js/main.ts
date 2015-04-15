@@ -32,8 +32,9 @@
     }
 
     export function sendGameDataOrKill(type: GameDataType, data) {
-        if (App.Comms == null || App.Comms.dataChannel == null || App.Comms.dataChannel.send == null) {
+        if (App.Comms == null || App.Comms.dataChannel == null || App.Comms.dataChannel.send == null || App.Comms.dataChannel.readyState != "open") {
             logOrDefault("MainTS: DataChannel not yet set up", "orange");
+            return;
         }
 
         var gameData = new GameData(type, data);
@@ -54,7 +55,10 @@
                 App.Display.scene.add(bullet.mesh);
                 return;
             case GameDataType.POSITION:
+                App.Display.handleMovement(data.data);
+                return;
             default:
+                logOrDefault("Error with processing game data", "orange");
                 return;
         }
     }
