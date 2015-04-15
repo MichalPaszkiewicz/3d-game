@@ -123,15 +123,7 @@
     };
 
     export function fire() {
-        var circleGeometry = new THREE.SphereGeometry(0.02);
-        var bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        var tempBullet = new THREE.Mesh(circleGeometry, bulletMaterial);
-        tempBullet.position.x = camera.position.x;
-        // lower the bullet slightly. Will need to be sent from gun later on.
-        tempBullet.position.y = camera.position.y - 0.05;
-        tempBullet.position.z = camera.position.z;
-        bullets.push(new App.Combat.bullet(tempBullet));
-        scene.add(tempBullet);
+        bullets.push(App.Combat.addBulletType(App.Combat.bulletType.NORMAL, scene, camera));
     }
 
     function drawPerson() {

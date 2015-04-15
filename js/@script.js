@@ -511,15 +511,7 @@ var App;
             }
         };
         function fire() {
-            var circleGeometry = new THREE.SphereGeometry(0.02);
-            var bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            var tempBullet = new THREE.Mesh(circleGeometry, bulletMaterial);
-            tempBullet.position.x = Display.camera.position.x;
-            // lower the bullet slightly. Will need to be sent from gun later on.
-            tempBullet.position.y = Display.camera.position.y - 0.05;
-            tempBullet.position.z = Display.camera.position.z;
-            bullets.push(new App.Combat.bullet(tempBullet));
-            scene.add(tempBullet);
+            bullets.push(App.Combat.addBulletType(0 /* NORMAL */, scene, Display.camera));
         }
         Display.fire = fire;
         function drawPerson() {
@@ -562,22 +554,57 @@ var App;
             bulletType[bulletType["NORMAL"] = 0] = "NORMAL";
         })(Combat.bulletType || (Combat.bulletType = {}));
         var bulletType = Combat.bulletType;
-        function addBulletType(ammoType) {
+        var BulletSetting = (function () {
+            function BulletSetting(speed, damage) {
+                this.bulletSpeed = speed;
+            }
+            return BulletSetting;
+        })();
+        function getBulletSettings(type) {
+            switch (type) {
+                case 0 /* NORMAL */:
+                default:
+                    return new BulletSetting(0.1, 10);
+            }
+        }
+        function getBulletMesh(type, camera) {
+            var bulletMesh;
+            switch (type) {
+                case 0 /* NORMAL */:
+                default:
+                    var circleGeometry = new THREE.SphereGeometry(0.02);
+                    var bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                    bulletMesh = new THREE.Mesh(circleGeometry, bulletMaterial);
+            }
+            bulletMesh.position.x = camera.position.x;
+            // lower the bullet slightly. Will need to be sent from gun later on.
+            bulletMesh.position.y = camera.position.y - 0.05;
+            bulletMesh.position.z = camera.position.z;
+            return bulletMesh;
+        }
+        var Bullet = (function () {
+            function Bullet(mesh, ammoType, settings) {
+                this.mesh = mesh;
+                this.age = 0;
+                this.settings = settings;
+                var vector = new THREE.Vector3(0, 0, -1);
+                vector.applyQuaternion(camera.quaternion);
+                this.velocity = vector;
+                this.updatePosition = function () {
+                    this.mesh.position.x += this.velocity.x * bulletSpeed;
+                    this.mesh.position.y += this.velocity.y * bulletSpeed;
+                    this.mesh.position.z += this.velocity.z * bulletSpeed;
+                };
+            }
+            return Bullet;
+        })();
+        function addBulletType(ammoType, scene, camera) {
+            var bulletMesh = getBulletMesh(ammoType, camera);
+            var bullet = new Bullet(bulletMesh, ammoType, getBulletSettings(ammoType));
+            scene.add(bullet.mesh);
+            return bullet;
         }
         Combat.addBulletType = addBulletType;
-        function bullet(mesh) {
-            this.mesh = mesh;
-            this.age = 0;
-            var vector = new THREE.Vector3(0, 0, -1);
-            vector.applyQuaternion(camera.quaternion);
-            this.velocity = vector;
-            this.updatePosition = function () {
-                this.mesh.position.x += this.velocity.x * bulletSpeed;
-                this.mesh.position.y += this.velocity.y * bulletSpeed;
-                this.mesh.position.z += this.velocity.z * bulletSpeed;
-            };
-        }
-        Combat.bullet = bullet;
     })(Combat = App.Combat || (App.Combat = {}));
 })(App || (App = {}));
 var App;
