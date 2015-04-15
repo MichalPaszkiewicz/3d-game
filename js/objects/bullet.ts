@@ -25,7 +25,7 @@
         }
     }
 
-    function getBulletMesh(type: BulletType, camera: THREE.Camera): THREE.Mesh {
+    function getBulletMesh(type: BulletType): THREE.Mesh {
         var bulletMesh: THREE.Mesh;
 
         switch (type) {
@@ -36,18 +36,10 @@
              bulletMesh = new THREE.Mesh(circleGeometry, bulletMaterial);
         }
 
-        var vector = new THREE.Vector3();
-        vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
-
-        bulletMesh.position.x = vector.x;
-        // lower the bullet slightly. Will need to be sent from gun later on.
-        bulletMesh.position.y = vector.y;
-        bulletMesh.position.z = vector.z;
-
         return bulletMesh;
     }
 
-    class Bullet {
+    export class Bullet {
         type: BulletType;
         mesh: THREE.Mesh;
         age: number;
@@ -70,12 +62,31 @@
         }
     }
 
-    export function addBulletType(ammoType: BulletType, scene: THREE.Scene, camera: THREE.Camera){
-        var bullet = new Bullet(ammoType, getBulletMesh(ammoType, camera), getBulletSettings(ammoType));
+    export class ImportBullet extends Bullet {
+        constructor(ammoType: BulletType, settings: BulletSetting) {
+            var mesh = getBulletMesh(ammoType);
+            super(ammoType, mesh, settings);
+            this.updatePosition = function () {
+                this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
+                this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
+                this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
+            };
+        }
+    }
+
+    export function addBulletType(ammoType: BulletType, scene: THREE.Scene, camera: THREE.Camera): Bullet{
+        var bullet = new Bullet(ammoType, getBulletMesh(ammoType), getBulletSettings(ammoType));
+
+        var vector = new THREE.Vector3();
+        vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+
+        bullet.mesh.position.x = vector.x;
+        // lower the bullet slightly. Will need to be sent from gun later on.
+        bullet.mesh.position.y = vector.y;
+        bullet.mesh.position.z = vector.z;
+
         scene.add(bullet.mesh);
 
         return bullet;
     }
-
-
 }

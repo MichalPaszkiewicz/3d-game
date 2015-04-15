@@ -18,7 +18,30 @@ module App.Comms {
 
     export var dataChannel = peerConnection.createDataChannel("datachannel", { reliable: false });
 
-    dataChannel.onmessage = function (e: any) { log("(webRTC) " + e.data); };
+    dataChannel.onmessage = function (e: any) {
+        var data = e.data;
+        var dataJSON = JSON.parse(data);
+
+        if (dataJSON != null) {
+            switch (dataJSON.type) {
+                case "text":
+                    log("(webRTC) " + dataJSON.message);
+                    break;
+                case "red":
+                    log("(webRTC) " + dataJSON.message, "red");
+                    break;
+                case "game":
+                    processGameData(dataJSON.message);
+                    break;
+                default:
+                    log(dataJSON);
+            }
+        }
+        else {
+            log("Received erroneous message from websocket", "red");
+        }
+    };
+
     dataChannel.onopen = function () { log("------ DATACHANNEL OPENED ------"); };
     dataChannel.onclose = function () { log("------- DC closed! -------"); };
     dataChannel.onerror = function () { log("DC ERROR!!!"); };

@@ -125,8 +125,19 @@
         }
     };
 
+    export function addBullet(bullet) {
+        bullets.push(bullet);
+    }
+
     export function fire() {
-        bullets.push(App.Combat.addBulletType(App.Combat.BulletType.NORMAL, scene, camera));
+        var tempBullet = App.Combat.addBulletType(App.Combat.BulletType.NORMAL, scene, camera);
+        addBullet(tempBullet);
+        sendGameDataOrKill(GameDataType.BULLET, {
+            type: tempBullet.type,
+            settings: tempBullet.settings,
+            position: tempBullet.mesh.position,
+            velocity: tempBullet.velocity
+        });
     }
 
     function drawPerson() {

@@ -110,6 +110,7 @@
     <TypeScriptCompile Include="js\lib\pointerlock.d.ts" />
     <TypeScriptCompile Include="js\main.ts" />
     <TypeScriptCompile Include="js\objects\bullet.ts" />
+    <TypeScriptCompile Include="js\objects\gameData.ts" />
     <TypeScriptCompile Include="js\objects\me.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
     <TypeScriptCompile Include="js\objects\weapon.ts" />

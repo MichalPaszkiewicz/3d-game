@@ -63,7 +63,26 @@ var App;
         };
         Comms.dataChannel = Comms.peerConnection.createDataChannel("datachannel", { reliable: false });
         Comms.dataChannel.onmessage = function (e) {
-            log("(webRTC) " + e.data);
+            var data = e.data;
+            var dataJSON = JSON.parse(data);
+            if (dataJSON != null) {
+                switch (dataJSON.type) {
+                    case "text":
+                        log("(webRTC) " + dataJSON.message);
+                        break;
+                    case "red":
+                        log("(webRTC) " + dataJSON.message, "red");
+                        break;
+                    case "game":
+                        App.processGameData(dataJSON.message);
+                        break;
+                    default:
+                        log(dataJSON);
+                }
+            }
+            else {
+                log("Received erroneous message from websocket", "red");
+            }
         };
         Comms.dataChannel.onopen = function () {
             log("------ DATACHANNEL OPENED ------");
@@ -510,8 +529,19 @@ var App;
                 bullets[i].updatePosition();
             }
         };
+        function addBullet(bullet) {
+            bullets.push(bullet);
+        }
+        Display.addBullet = addBullet;
         function fire() {
-            bullets.push(App.Combat.addBulletType(0 /* NORMAL */, Display.scene, Display.camera));
+            var tempBullet = App.Combat.addBulletType(0 /* NORMAL */, Display.scene, Display.camera);
+            addBullet(tempBullet);
+            App.sendGameDataOrKill(0 /* BULLET */, {
+                type: tempBullet.type,
+                settings: tempBullet.settings,
+                position: tempBullet.mesh.position,
+                velocity: tempBullet.velocity
+            });
         }
         Display.fire = fire;
         function drawPerson() {
@@ -538,12 +568,65 @@ var App;
         App.Display.log("me: " + message);
     }
     App.serverChat = serverChat;
-    function chat(message) {
-        App.Comms.dataChannel.send(App.Comms.myID + ": " + message);
-        App.Display.log("me: " + message);
+    function chat(text) {
+        rtcSendOrKill("text", App.Comms.myID + ": " + text);
+        logOrDefault("me: " + text, "black");
     }
     App.chat = chat;
+    // for use if all things are breaking.
+    function logOrDefault(text, colour) {
+        if (App.Display.log != null) {
+            App.Display.log(text, colour);
+        }
+        else {
+            if (colour == null) {
+                colour = "black";
+            }
+            console.log("%c" + text, colour);
+        }
+    }
+    function rtcSendOrKill(msgType, data) {
+        if (App.Comms != null && App.Comms.dataChannel != null && App.Comms.dataChannel.send != null) {
+            var message = App.Message(msgType, data);
+            App.Comms.dataChannel.send(message.asString());
+            return;
+        }
+        logOrDefault("MainTS: Error sending RTC msg", "orange");
+    }
+    App.rtcSendOrKill = rtcSendOrKill;
+    function sendGameDataOrKill(type, data) {
+        if (App.Comms == null || App.Comms.dataChannel == null || App.Comms.dataChannel.send == null) {
+            logOrDefault("MainTS: DataChannel not yet set up", "orange");
+        }
+        var gameData = new App.GameData(type, data);
+        var message = App.Message("game", gameData);
+        App.Comms.dataChannel.send(message.asString());
+    }
+    App.sendGameDataOrKill = sendGameDataOrKill;
+    function processGameData(data) {
+        switch (data.type) {
+            case 0 /* BULLET */:
+                var bullet = new App.Combat.ImportBullet(data.data["type"], data.data["settings"]);
+                bullet.mesh.position.x = data.data["position"].x;
+                bullet.mesh.position.y = data.data["position"].y;
+                bullet.mesh.position.z = data.data["position"].z;
+                bullet.velocity = data.data["velocity"];
+                App.Display.addBullet(bullet);
+                App.Display.scene.add(bullet.mesh);
+                return;
+            case 1 /* POSITION */:
+            default:
+                return;
+        }
+    }
+    App.processGameData = processGameData;
 })(App || (App = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var App;
 (function (App) {
     var Combat;
@@ -568,7 +651,7 @@ var App;
                     return new BulletSetting(0.1, 10);
             }
         }
-        function getBulletMesh(type, camera) {
+        function getBulletMesh(type) {
             var bulletMesh;
             switch (type) {
                 case 0 /* NORMAL */:
@@ -577,12 +660,6 @@ var App;
                     var bulletMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
                     bulletMesh = new THREE.Mesh(circleGeometry, bulletMaterial);
             }
-            var vector = new THREE.Vector3();
-            vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
-            bulletMesh.position.x = vector.x;
-            // lower the bullet slightly. Will need to be sent from gun later on.
-            bulletMesh.position.y = vector.y;
-            bulletMesh.position.z = vector.z;
             return bulletMesh;
         }
         var Bullet = (function () {
@@ -602,13 +679,50 @@ var App;
             }
             return Bullet;
         })();
+        Combat.Bullet = Bullet;
+        var ImportBullet = (function (_super) {
+            __extends(ImportBullet, _super);
+            function ImportBullet(ammoType, settings) {
+                var mesh = getBulletMesh(ammoType);
+                _super.call(this, ammoType, mesh, settings);
+                this.updatePosition = function () {
+                    this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
+                    this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
+                    this.mesh.position.z += this.velocity.z * this.settings.bulletSpeed;
+                };
+            }
+            return ImportBullet;
+        })(Bullet);
+        Combat.ImportBullet = ImportBullet;
         function addBulletType(ammoType, scene, camera) {
-            var bullet = new Bullet(ammoType, getBulletMesh(ammoType, camera), getBulletSettings(ammoType));
+            var bullet = new Bullet(ammoType, getBulletMesh(ammoType), getBulletSettings(ammoType));
+            var vector = new THREE.Vector3();
+            vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+            bullet.mesh.position.x = vector.x;
+            // lower the bullet slightly. Will need to be sent from gun later on.
+            bullet.mesh.position.y = vector.y;
+            bullet.mesh.position.z = vector.z;
             scene.add(bullet.mesh);
             return bullet;
         }
         Combat.addBulletType = addBulletType;
     })(Combat = App.Combat || (App.Combat = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (GameDataType) {
+        GameDataType[GameDataType["BULLET"] = 0] = "BULLET";
+        GameDataType[GameDataType["POSITION"] = 1] = "POSITION";
+    })(App.GameDataType || (App.GameDataType = {}));
+    var GameDataType = App.GameDataType;
+    var GameData = (function () {
+        function GameData(type, data) {
+            this.type = type;
+            this.data = data;
+        }
+        return GameData;
+    })();
+    App.GameData = GameData;
 })(App || (App = {}));
 var App;
 (function (App) {
@@ -688,7 +802,7 @@ var App;
         function addWeaponType(weaponType, scene, camera) {
             var bullet = new Weapon(weaponType, getWeaponMesh(weaponType, camera), getWeaponSettings(weaponType));
             camera.add(bullet.mesh);
-            bullet.mesh.position.set(0.35, -0.15, -0.25);
+            bullet.mesh.position.set(0.35 * App.canvas.width / 1350, -0.15, -0.25);
             scene.add(camera);
             return bullet;
         }
