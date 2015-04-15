@@ -8,7 +8,12 @@
             if (colour == null) {
                 colour = "black";
             }
-            self.logs.push({ text: text, colour: colour });
+            if (self.logs.length > 0 && self.logs[self.logs.length - 1].text == text) {
+                self.logs[self.logs.length - 1].count++;
+            }
+            else {
+                self.logs.push({ text: text, colour: colour, count: 0 });
+            }
         };
         self.drawLog = function () {
             var cutoff = 0;
@@ -17,7 +22,11 @@
             }
             for (var i = 0; i < self.logs.length; i++) {
                 ctx.fillStyle = self.logs[i].colour;
-                ctx.fillText(self.logs[i].text, 10, 10 * i + 10 - cutoff);
+                var displayText = self.logs[i].text;
+                if (self.logs[i].count > 0) {
+                    displayText += " (" + self.logs[i].count + ")";
+                }
+                ctx.fillText(displayText, 10, 10 * i + 10 - cutoff);
             }
         };
         self.clearLog = function () {
