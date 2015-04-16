@@ -149,7 +149,7 @@ var App;
     var Comms;
     (function (Comms) {
         var log = App.Display.log;
-        var serverString = "ws:localhost:8080";
+        var serverString = "ws:MICHAL:8080";
         Comms.myID = Math.random().toString(16).replace("0.", "");
         var socket = new WebSocket(serverString);
         socket.onopen = Sonopen;
@@ -303,12 +303,14 @@ var App;
         document.exitPointerLock();
         var cameraXAxis = new THREE.Vector3(1, 0, 0);
         var rotationYAxis = new THREE.Vector3(0, 1, 0);
-        var fullRotationX = 0;
+        Control.fullRotationX = 0;
+        Control.fullRotationY = 0;
         function moveCallback(e) {
-            if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
+            if (Math.abs(Control.fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
                 App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
                 rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
-                fullRotationX -= e.movementY / 100;
+                Control.fullRotationX -= e.movementY / 100;
+                Control.fullRotationY -= e.movementX / 100;
             }
             App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
         }
@@ -538,7 +540,7 @@ var App;
                     App.sendGameDataOrKill(1 /* POSITION */, {
                         x: Display.camera.position.x,
                         z: Display.camera.position.z,
-                        d: Display.camera.rotation.y
+                        d: App.Control.fullRotationY
                     });
                 }
                 catch (e) {
@@ -598,7 +600,7 @@ var App;
         function handleMovement(pos) {
             Display.otherPerson.position.x = pos.x;
             Display.otherPerson.position.z = pos.z;
-            Display.otherPerson.rotation.y = pos.d;
+            Display.otherPerson.rotation.y = pos.d + Math.PI;
         }
         Display.handleMovement = handleMovement;
         drawPerson();

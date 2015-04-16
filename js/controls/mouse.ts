@@ -21,13 +21,15 @@
 
     var cameraXAxis = new THREE.Vector3(1, 0, 0);
     var rotationYAxis = new THREE.Vector3(0, 1, 0);
-    var fullRotationX = 0;
+    export var fullRotationX = 0;
+    export var fullRotationY = 0;
 
     function moveCallback(e) {
         if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
             App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
             rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
             fullRotationX -= e.movementY / 100;
+            fullRotationY -= e.movementX / 100;
         }
         App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
     }

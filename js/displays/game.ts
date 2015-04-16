@@ -123,7 +123,7 @@
                 sendGameDataOrKill(GameDataType.POSITION, {
                     x: camera.position.x,
                     z: camera.position.z,
-                    d: camera.rotation.y
+                    d: App.Control.fullRotationY
                 });
             }
             catch (e) {
@@ -192,7 +192,7 @@
     export function handleMovement(pos) {
         otherPerson.position.x = pos.x;
         otherPerson.position.z = pos.z;
-        otherPerson.rotation.y = pos.d;
+        otherPerson.rotation.y = pos.d + Math.PI;
     }
 
     drawPerson();
