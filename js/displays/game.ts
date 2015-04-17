@@ -162,7 +162,7 @@
     }
 
     export function fire() {
-        var tempBullet = App.Combat.addBulletType(App.Combat.BulletType.NORMAL, scene, camera);
+        var tempBullet = App.Combat.addBulletType(App.Combat.BulletType.NORMAL, scene, camera, !App.Control.zoom);
         addBullet(tempBullet);
         sendGameDataOrKill(GameDataType.BULLET, {
             type: tempBullet.type,
@@ -170,6 +170,11 @@
             position: tempBullet.mesh.position,
             velocity: tempBullet.velocity
         });
+
+        if (App.Control.zoom) {
+            App.Control.zoom = !App.Control.zoom;
+            toggleZoom();
+        }
     }
 
     export function toggleZoom(){

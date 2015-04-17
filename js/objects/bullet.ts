@@ -81,11 +81,16 @@
         }
     }
 
-    export function addBulletType(ammoType: BulletType, scene: THREE.Scene, camera: THREE.Camera): Bullet{
+    export function addBulletType(ammoType: BulletType, scene: THREE.Scene, camera: THREE.Camera, fromWeapon: boolean): Bullet{
         var bullet = new Bullet(ammoType, getBulletMesh(ammoType), getBulletSettings(ammoType));
 
         var vector = new THREE.Vector3();
-        vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+        if (fromWeapon) {
+            vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+        }
+        else {
+            vector.setFromMatrixPosition(App.Display.camera.matrixWorld);
+        }
 
         bullet.mesh.position.x = vector.x;
         // lower the bullet slightly. Will need to be sent from gun later on.

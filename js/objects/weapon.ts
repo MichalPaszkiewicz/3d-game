@@ -68,7 +68,7 @@
     export function addWeaponType(weaponType: WeaponType, scene: THREE.Scene, camera: THREE.Camera) {
         var bullet = new Weapon(weaponType, getWeaponMesh(weaponType, camera), getWeaponSettings(weaponType));
         camera.add(bullet.mesh);
-        bullet.mesh.position.set(0.35 * App.canvas.width / 1350, -0.15, -0.25);
+        bullet.mesh.position.set(0.25, -0.15, -0.25);
         scene.add(camera);
         return bullet;
     }
