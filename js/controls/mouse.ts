@@ -23,19 +23,37 @@
     var rotationYAxis = new THREE.Vector3(0, 1, 0);
     export var fullRotationX = 0;
     export var fullRotationY = 0;
-
-    function moveCallback(e) {
-        if (Math.abs(fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
-            App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
-            rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
-            fullRotationX -= e.movementY / 100;
-            fullRotationY -= e.movementX / 100;
-        }
-        App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
+ 
+    export var zoom = false;
+    function getScaleFactor(): number {
+        return 100 * (zoom ? 32 : 1);
     }
 
-    function clickCallback() {
-        App.Display.fire();
+    function moveCallback(e) {
+        var scaleFactor = getScaleFactor();
+        if (Math.abs(fullRotationX - e.movementY / scaleFactor) < (Math.PI / 2)) {
+            App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / scaleFactor);
+            rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / scaleFactor);
+            fullRotationX -= e.movementY / scaleFactor;
+            fullRotationY -= e.movementX / scaleFactor;
+        }
+        App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / scaleFactor);
+    }
+
+    function clickCallback(e) {
+        // leftclick
+        if (e.button == 0) {
+            App.Display.fire();
+        }
+        // middleclick
+        if (e.button == 1) {
+
+        }
+        // rightclick
+        if (e.button == 2) {
+            zoom = !zoom;
+            App.Display.toggleZoom();
+        }
     }
 
     function changeCallback(e) {

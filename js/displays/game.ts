@@ -172,6 +172,19 @@
         });
     }
 
+    export function toggleZoom(){
+        if (App.Control.zoom) {
+            camera.fov /= 16;
+            App.Display.currentCrossHair = App.Display.crossHairType.SNIPER_ZOOM;
+        }
+        else {
+            camera.fov *= 16;
+            App.Display.currentCrossHair = App.Display.crossHairType.STANDARD;
+        }
+        canvasNeedsUpdate = true;
+        camera.updateProjectionMatrix();
+    }
+
     export var otherPerson: THREE.Object3D;
 
     function drawPerson() {
