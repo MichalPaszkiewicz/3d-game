@@ -5,7 +5,7 @@
 
     export var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 500;
-    camera.position.y = 0.5;
+    camera.position.y = 0.75;
 
     var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
 
@@ -42,7 +42,7 @@
             camera.position.y = 0.25;
         }
         else {
-            camera.position.y = 0.5;
+            camera.position.y = 0.75;
         }
 
         if (bullets != null && updateAllBullets != null) {

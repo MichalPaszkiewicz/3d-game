@@ -1,29 +1,32 @@
 ﻿module App.Combat {
     import camera = Display.camera;
 
-    var bulletSpeed = 0.1;
-
     export enum BulletType {
-        NORMAL
+        NORMAL,
+        FAST
     }
 
     class BulletSetting {
         bulletSpeed: number;
         damage: number;
         lifeSpan: number;
+        colour: string;
 
         constructor(speed: number, damage: number, lifeSpan: number) {
             this.bulletSpeed = speed;
             this.damage = damage;
             this.lifeSpan = lifeSpan;
+            this.colour = "red";
         }
     }
 
     function getBulletSettings(type: BulletType): BulletSetting {
         switch (type) {
+            case BulletType.FAST:
+                return new BulletSetting(0.5, 10, 1000);
             case BulletType.NORMAL:
             default:
-                return new BulletSetting(0.1, 10, 100);
+                return new BulletSetting(0.1, 10, 1000);
         }
     }
 
