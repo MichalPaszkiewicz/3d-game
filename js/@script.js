@@ -63,7 +63,8 @@ var App;
         Comms.connection = {
             "optional": [{ "DtlsSrtpKeyAgreement": true }, { "RtpDataChannels": true }]
         };
-        Comms.peerConnection = new webkitRTCPeerConnection(Comms.config, Comms.connection);
+        var PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        Comms.peerConnection = new PeerConnection(Comms.config, Comms.connection);
         Comms.peerConnection.onicecandidate = function (e) {
             if (!Comms.peerConnection || !e || !e.candidate) {
                 return;
