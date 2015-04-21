@@ -888,6 +888,16 @@ var App;
 (function (App) {
     var Player = (function () {
         function Player(name) {
+            this.name = name;
+            var me = this;
+            this.energy = 100;
+            this.health = 100;
+            this.position = new THREE.Vector3();
+            this.updatePosition = function (x, y, z) {
+                me.position.x = x;
+                me.position.y = y;
+                me.position.z = z;
+            };
         }
         return Player;
     })();
