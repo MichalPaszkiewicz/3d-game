@@ -4,6 +4,8 @@
 
         peerConnection: RTCPeerConnection;
 
+        dataChannel: RTCDataChannel;
+
         constructor(name : string) {
 
             super(name);

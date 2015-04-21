@@ -1,5 +1,20 @@
 var App;
 (function (App) {
+    App.Message = function (type, message) {
+        var self = {
+            content: {
+                type: type,
+                message: message
+            },
+            asString: function () {
+                return JSON.stringify(self.content);
+            }
+        };
+        return self;
+    };
+})(App || (App = {}));
+var App;
+(function (App) {
     App.canvas = document.getElementById("my-canvas");
     App.canvas.width = App.canvas.parentElement.offsetWidth;
     App.canvas.height = App.canvas.parentElement.offsetHeight;
@@ -64,44 +79,54 @@ var App;
             "optional": [{ "DtlsSrtpKeyAgreement": true }, { "RtpDataChannels": true }]
         };
         Comms.peerConnection = new webkitRTCPeerConnection(Comms.config, Comms.connection);
-        Comms.peerConnection.onicecandidate = function (e) {
-            if (!Comms.peerConnection || !e || !e.candidate) {
-                return;
-            }
-            Comms.sendToServer("candidate", { candidate: e.candidate });
-        };
-        Comms.dataChannel = Comms.peerConnection.createDataChannel("datachannel", { reliable: false });
-        Comms.dataChannel.onmessage = function (e) {
-            var data = e.data;
-            var dataJSON = JSON.parse(data);
-            if (dataJSON != null) {
-                switch (dataJSON.type) {
-                    case "text":
-                        log("(webRTC) " + dataJSON.message);
-                        break;
-                    case "red":
-                        log("(webRTC) " + dataJSON.message, "red");
-                        break;
-                    case "game":
-                        App.processGameData(dataJSON.message);
-                        break;
-                    default:
-                        log(dataJSON);
+        // attach all necessary functions to peerConnection.
+        function attachRTCConnectionFunctions(connection) {
+            connection.onicecandidate = function (e) {
+                if (!connection || !e || !e.candidate) {
+                    return;
                 }
-            }
-            else {
-                log("Received erroneous message from websocket", "red");
-            }
-        };
-        Comms.dataChannel.onopen = function () {
-            log("------ DATACHANNEL OPENED ------");
-        };
-        Comms.dataChannel.onclose = function () {
-            log("------- DC closed! -------");
-        };
-        Comms.dataChannel.onerror = function () {
-            log("DC ERROR!!!");
-        };
+                Comms.sendToServer("candidate", { candidate: e.candidate });
+            };
+        }
+        Comms.attachRTCConnectionFunctions = attachRTCConnectionFunctions;
+        attachRTCConnectionFunctions(Comms.peerConnection);
+        Comms.dataChannel = Comms.peerConnection.createDataChannel("datachannel", { reliable: false });
+        // attach all necessary functions to dataChannel
+        function attachRTCDataChannelFunctions(channel) {
+            channel.onmessage = function (e) {
+                var data = e.data;
+                var dataJSON = JSON.parse(data);
+                if (dataJSON != null) {
+                    switch (dataJSON.type) {
+                        case "text":
+                            log("(webRTC) " + dataJSON.message);
+                            break;
+                        case "red":
+                            log("(webRTC) " + dataJSON.message, "red");
+                            break;
+                        case "game":
+                            App.processGameData(dataJSON.message);
+                            break;
+                        default:
+                            log(dataJSON);
+                    }
+                }
+                else {
+                    log("Received erroneous message from websocket", "red");
+                }
+            };
+            channel.onopen = function () {
+                log("------ DATACHANNEL OPENED ------");
+            };
+            channel.onclose = function () {
+                log("------- DC closed! -------");
+            };
+            channel.onerror = function () {
+                log("DC ERROR!!!");
+            };
+        }
+        Comms.attachRTCDataChannelFunctions = attachRTCDataChannelFunctions;
+        attachRTCDataChannelFunctions(Comms.dataChannel);
         Comms.sdpConstraints = {
             "mandatory": {
                 "OfferToReceiveAudio": false,
@@ -868,21 +893,6 @@ var App;
         return Human;
     })(App.Player);
     App.Human = Human;
-})(App || (App = {}));
-var App;
-(function (App) {
-    App.Message = function (type, message) {
-        var self = {
-            content: {
-                type: type,
-                message: message
-            },
-            asString: function () {
-                return JSON.stringify(self.content);
-            }
-        };
-        return self;
-    };
 })(App || (App = {}));
 var App;
 (function (App) {

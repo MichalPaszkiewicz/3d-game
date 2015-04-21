@@ -11,40 +11,50 @@ module App.Comms {
     
     export var peerConnection = new webkitRTCPeerConnection(config, connection);
 
-    peerConnection.onicecandidate = function (e) {
-        if (!peerConnection || !e || !e.candidate) { return; }
-        sendToServer("candidate", { candidate: e.candidate });
-    };
+    // attach all necessary functions to peerConnection.
+    export function attachRTCConnectionFunctions(connection: RTCPeerConnection) {
+        connection.onicecandidate = function (e) {
+            if (!connection || !e || !e.candidate) { return; }
+            sendToServer("candidate", { candidate: e.candidate });
+        }
+    }
+
+    attachRTCConnectionFunctions(peerConnection);
 
     export var dataChannel = peerConnection.createDataChannel("datachannel", { reliable: false });
 
-    dataChannel.onmessage = function (e: any) {
-        var data = e.data;
-        var dataJSON = JSON.parse(data);
+    // attach all necessary functions to dataChannel
+    export function attachRTCDataChannelFunctions(channel: RTCDataChannel) {
+        channel.onmessage = function (e: any) {
+            var data = e.data;
+            var dataJSON = JSON.parse(data);
 
-        if (dataJSON != null) {
-            switch (dataJSON.type) {
-                case "text":
-                    log("(webRTC) " + dataJSON.message);
-                    break;
-                case "red":
-                    log("(webRTC) " + dataJSON.message, "red");
-                    break;
-                case "game":
-                    processGameData(dataJSON.message);
-                    break;
-                default:
-                    log(dataJSON);
+            if (dataJSON != null) {
+                switch (dataJSON.type) {
+                    case "text":
+                        log("(webRTC) " + dataJSON.message);
+                        break;
+                    case "red":
+                        log("(webRTC) " + dataJSON.message, "red");
+                        break;
+                    case "game":
+                        processGameData(dataJSON.message);
+                        break;
+                    default:
+                        log(dataJSON);
+                }
             }
-        }
-        else {
-            log("Received erroneous message from websocket", "red");
-        }
-    };
+            else {
+                log("Received erroneous message from websocket", "red");
+            }
+        };
 
-    dataChannel.onopen = function () { log("------ DATACHANNEL OPENED ------"); };
-    dataChannel.onclose = function () { log("------- DC closed! -------"); };
-    dataChannel.onerror = function () { log("DC ERROR!!!"); };
+        channel.onopen = function () { log("------ DATACHANNEL OPENED ------"); };
+        channel.onclose = function () { log("------- DC closed! -------"); };
+        channel.onerror = function () { log("DC ERROR!!!"); };
+    }
+
+    attachRTCDataChannelFunctions(dataChannel);
 
     export var sdpConstraints: RTCOptionalMediaConstraint = {
         "mandatory":
