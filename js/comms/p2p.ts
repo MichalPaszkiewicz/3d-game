@@ -9,9 +9,7 @@ module App.Comms {
         [{ "DtlsSrtpKeyAgreement": true }, { "RtpDataChannels": true }]
     };
     
-    var PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-
-    export var peerConnection = new PeerConnection(config, connection);
+    export var peerConnection = new webkitRTCPeerConnection(config, connection);
 
     peerConnection.onicecandidate = function (e) {
         if (!peerConnection || !e || !e.candidate) { return; }

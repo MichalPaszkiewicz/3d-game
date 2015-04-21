@@ -63,8 +63,7 @@ var App;
         Comms.connection = {
             "optional": [{ "DtlsSrtpKeyAgreement": true }, { "RtpDataChannels": true }]
         };
-        var PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-        Comms.peerConnection = new PeerConnection(Comms.config, Comms.connection);
+        Comms.peerConnection = new webkitRTCPeerConnection(Comms.config, Comms.connection);
         Comms.peerConnection.onicecandidate = function (e) {
             if (!Comms.peerConnection || !e || !e.candidate) {
                 return;
@@ -150,7 +149,7 @@ var App;
     var Comms;
     (function (Comms) {
         var log = App.Display.log;
-        var serverString = "ws:MICHAL:8080";
+        var serverString = "ws:localhost:8080";
         Comms.myID = Math.random().toString(16).replace("0.", "");
         var socket = new WebSocket(serverString);
         socket.onopen = Sonopen;
@@ -306,17 +305,33 @@ var App;
         var rotationYAxis = new THREE.Vector3(0, 1, 0);
         Control.fullRotationX = 0;
         Control.fullRotationY = 0;
-        function moveCallback(e) {
-            if (Math.abs(Control.fullRotationX - e.movementY / 100) < (Math.PI / 2)) {
-                App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / 100);
-                rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / 100);
-                Control.fullRotationX -= e.movementY / 100;
-                Control.fullRotationY -= e.movementX / 100;
-            }
-            App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / 100);
+        Control.zoom = false;
+        function getScaleFactor() {
+            return 100 * (Control.zoom ? 32 : 1);
         }
-        function clickCallback() {
-            App.Display.fire();
+        function moveCallback(e) {
+            var scaleFactor = getScaleFactor();
+            if (Math.abs(Control.fullRotationX - e.movementY / scaleFactor) < (Math.PI / 2)) {
+                App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / scaleFactor);
+                rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / scaleFactor);
+                Control.fullRotationX -= e.movementY / scaleFactor;
+                Control.fullRotationY -= e.movementX / scaleFactor;
+            }
+            App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / scaleFactor);
+        }
+        function clickCallback(e) {
+            // leftclick
+            if (e.button == 0) {
+                App.Display.fire();
+            }
+            // middleclick
+            if (e.button == 1) {
+            }
+            // rightclick
+            if (e.button == 2) {
+                Control.zoom = !Control.zoom;
+                App.Display.toggleZoom();
+            }
         }
         function changeCallback(e) {
             if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
@@ -381,10 +396,13 @@ var App;
 (function (App) {
     var Display;
     (function (Display) {
-        Display.crossHairType = {
-            "standard": 0,
-            "sniper": 1
-        };
+        (function (crossHairType) {
+            crossHairType[crossHairType["STANDARD"] = 0] = "STANDARD";
+            crossHairType[crossHairType["SNIPER"] = 1] = "SNIPER";
+            crossHairType[crossHairType["SNIPER_ZOOM"] = 2] = "SNIPER_ZOOM";
+        })(Display.crossHairType || (Display.crossHairType = {}));
+        var crossHairType = Display.crossHairType;
+        ;
         var crossHairs = [
             {
                 name: "standard",
@@ -429,11 +447,35 @@ var App;
                     App.ctx.stroke();
                     App.ctx.strokeStyle = "black";
                 }
+            },
+            {
+                name: "sniper_zoom",
+                draw: function () {
+                    var scopeR = 300;
+                    App.ctx.fillStyle = "black";
+                    App.ctx.fillRect(0, 0, App.canvas.width, App.canvas.height);
+                    App.ctx.globalCompositeOperation = "xor";
+                    App.ctx.beginPath();
+                    App.ctx.arc(App.canvas.width / 2, App.canvas.height / 2, scopeR, 0, Math.PI * 2, false);
+                    App.ctx.closePath();
+                    App.ctx.fill();
+                    App.ctx.restore();
+                    App.ctx.beginPath();
+                    App.ctx.strokeStyle = "black";
+                    App.ctx.beginPath();
+                    App.ctx.moveTo(App.canvas.width / 2 - scopeR, App.canvas.height / 2);
+                    App.ctx.lineTo(App.canvas.width / 2 + scopeR, App.canvas.height / 2);
+                    App.ctx.stroke();
+                    App.ctx.beginPath();
+                    App.ctx.moveTo(App.canvas.width / 2, App.canvas.height / 2 - scopeR);
+                    App.ctx.lineTo(App.canvas.width / 2, App.canvas.height / 2 + scopeR);
+                    App.ctx.stroke();
+                }
             }
         ];
-        var currentCrossHair = Display.crossHairType.standard;
+        Display.currentCrossHair = 0 /* STANDARD */;
         function drawCrossHair() {
-            crossHairs[currentCrossHair].draw();
+            crossHairs[Display.currentCrossHair].draw();
         }
         Display.drawCrossHair = drawCrossHair;
     })(Display = App.Display || (App.Display = {}));
@@ -446,7 +488,7 @@ var App;
         Display.scene = new THREE.Scene();
         Display.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         Display.camera.position.z = 500;
-        Display.camera.position.y = 0.5;
+        Display.camera.position.y = 0.75;
         var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -472,7 +514,7 @@ var App;
                 Display.camera.position.y = 0.25;
             }
             else {
-                Display.camera.position.y = 0.5;
+                Display.camera.position.y = 0.75;
             }
             if (Display.bullets != null && updateAllBullets != null) {
                 updateAllBullets();
@@ -575,7 +617,7 @@ var App;
         }
         Display.addBullet = addBullet;
         function fire() {
-            var tempBullet = App.Combat.addBulletType(0 /* NORMAL */, Display.scene, Display.camera);
+            var tempBullet = App.Combat.addBulletType(0 /* NORMAL */, Display.scene, Display.camera, !App.Control.zoom);
             addBullet(tempBullet);
             App.sendGameDataOrKill(0 /* BULLET */, {
                 type: tempBullet.type,
@@ -583,8 +625,25 @@ var App;
                 position: tempBullet.mesh.position,
                 velocity: tempBullet.velocity
             });
+            if (App.Control.zoom) {
+                App.Control.zoom = !App.Control.zoom;
+                toggleZoom();
+            }
         }
         Display.fire = fire;
+        function toggleZoom() {
+            if (App.Control.zoom) {
+                Display.camera.fov /= 16;
+                App.Display.currentCrossHair = 2 /* SNIPER_ZOOM */;
+            }
+            else {
+                Display.camera.fov *= 16;
+                App.Display.currentCrossHair = 0 /* STANDARD */;
+            }
+            App.canvasNeedsUpdate = true;
+            Display.camera.updateProjectionMatrix();
+        }
+        Display.toggleZoom = toggleZoom;
         Display.otherPerson;
         function drawPerson() {
             var loader = new THREE.ObjectLoader();
@@ -682,12 +741,23 @@ var __extends = this.__extends || function (d, b) {
 };
 var App;
 (function (App) {
+    var AI = (function (_super) {
+        __extends(AI, _super);
+        function AI(name) {
+            _super.call(this, name);
+        }
+        return AI;
+    })(App.Player);
+    App.AI = AI;
+})(App || (App = {}));
+var App;
+(function (App) {
     var Combat;
     (function (Combat) {
         var camera = App.Display.camera;
-        var bulletSpeed = 0.1;
         (function (BulletType) {
             BulletType[BulletType["NORMAL"] = 0] = "NORMAL";
+            BulletType[BulletType["FAST"] = 1] = "FAST";
         })(Combat.BulletType || (Combat.BulletType = {}));
         var BulletType = Combat.BulletType;
         var BulletSetting = (function () {
@@ -695,14 +765,17 @@ var App;
                 this.bulletSpeed = speed;
                 this.damage = damage;
                 this.lifeSpan = lifeSpan;
+                this.colour = "red";
             }
             return BulletSetting;
         })();
         function getBulletSettings(type) {
             switch (type) {
+                case 1 /* FAST */:
+                    return new BulletSetting(0.5, 10, 1000);
                 case 0 /* NORMAL */:
                 default:
-                    return new BulletSetting(0.1, 10, 100);
+                    return new BulletSetting(0.1, 10, 1000);
             }
         }
         function getBulletMesh(type) {
@@ -750,10 +823,15 @@ var App;
             return ImportBullet;
         })(Bullet);
         Combat.ImportBullet = ImportBullet;
-        function addBulletType(ammoType, scene, camera) {
+        function addBulletType(ammoType, scene, camera, fromWeapon) {
             var bullet = new Bullet(ammoType, getBulletMesh(ammoType), getBulletSettings(ammoType));
             var vector = new THREE.Vector3();
-            vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+            if (fromWeapon) {
+                vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+            }
+            else {
+                vector.setFromMatrixPosition(App.Display.camera.matrixWorld);
+            }
             bullet.mesh.position.x = vector.x;
             // lower the bullet slightly. Will need to be sent from gun later on.
             bullet.mesh.position.y = vector.y;
@@ -782,6 +860,17 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    var Human = (function (_super) {
+        __extends(Human, _super);
+        function Human(name) {
+            _super.call(this, name);
+        }
+        return Human;
+    })(App.Player);
+    App.Human = Human;
+})(App || (App = {}));
+var App;
+(function (App) {
     App.Message = function (type, message) {
         var self = {
             content: {
@@ -794,6 +883,15 @@ var App;
         };
         return self;
     };
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Player = (function () {
+        function Player(name) {
+        }
+        return Player;
+    })();
+    App.Player = Player;
 })(App || (App = {}));
 var App;
 (function (App) {
@@ -858,7 +956,7 @@ var App;
         function addWeaponType(weaponType, scene, camera) {
             var bullet = new Weapon(weaponType, getWeaponMesh(weaponType, camera), getWeaponSettings(weaponType));
             camera.add(bullet.mesh);
-            bullet.mesh.position.set(0.35 * App.canvas.width / 1350, -0.15, -0.25);
+            bullet.mesh.position.set(0.25, -0.15, -0.25);
             scene.add(camera);
             return bullet;
         }
