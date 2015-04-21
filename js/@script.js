@@ -1,20 +1,5 @@
 var App;
 (function (App) {
-    App.Message = function (type, message) {
-        var self = {
-            content: {
-                type: type,
-                message: message
-            },
-            asString: function () {
-                return JSON.stringify(self.content);
-            }
-        };
-        return self;
-    };
-})(App || (App = {}));
-var App;
-(function (App) {
     App.canvas = document.getElementById("my-canvas");
     App.canvas.width = App.canvas.parentElement.offsetWidth;
     App.canvas.height = App.canvas.parentElement.offsetHeight;
@@ -893,6 +878,21 @@ var App;
         return Human;
     })(App.Player);
     App.Human = Human;
+})(App || (App = {}));
+var App;
+(function (App) {
+    App.Message = function (type, message) {
+        var self = {
+            content: {
+                type: type,
+                message: message
+            },
+            asString: function () {
+                return JSON.stringify(self.content);
+            }
+        };
+        return self;
+    };
 })(App || (App = {}));
 var App;
 (function (App) {
