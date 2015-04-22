@@ -247,7 +247,96 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
-    var players = [];
+    var Manager;
+    (function (Manager) {
+        var Player;
+        (function (Player) {
+            var players = [];
+            function addPlayer(player) {
+                players.push(player);
+            }
+            function addHuman(human) {
+                addPlayer(human);
+            }
+            Player.addHuman = addHuman;
+            function addAI(ai) {
+                addPlayer(ai);
+            }
+            Player.addAI = addAI;
+            function addNewHuman(name) {
+                var human = new App.Human(name);
+                addHuman(human);
+            }
+            Player.addNewHuman = addNewHuman;
+            function addNewAI(name) {
+                var ai = new App.AI(name);
+                addAI(ai);
+            }
+            Player.addNewAI = addNewAI;
+            function Do(x) {
+                for (var i = 0; i < players.length; i++) {
+                    x(players[i]);
+                }
+            }
+            Player.Do = Do;
+            function AIDo(x) {
+                Do(function (currentPlayer) {
+                    if (currentPlayer instanceof App.AI) {
+                        x(currentPlayer);
+                    }
+                });
+            }
+            Player.AIDo = AIDo;
+            function HumanDo(x) {
+                Do(function (currentPlayer) {
+                    if (currentPlayer instanceof App.Human) {
+                        x(currentPlayer);
+                    }
+                });
+            }
+            Player.HumanDo = HumanDo;
+            function removeHuman(name) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i] instanceof App.Human) {
+                        if (players[i].name == name) {
+                            players.splice(i, 1);
+                        }
+                    }
+                }
+            }
+            Player.removeHuman = removeHuman;
+            function removeAI(name) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i] instanceof App.AI) {
+                        if (players[i].name == name) {
+                            players.splice(i, 1);
+                        }
+                    }
+                }
+            }
+            Player.removeAI = removeAI;
+            function getAIFromName(name) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i] instanceof App.AI) {
+                        if (players[i].name == name) {
+                            return players[i];
+                        }
+                    }
+                }
+            }
+            Player.getAIFromName = getAIFromName;
+            function getHumanFromName(name) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i] instanceof App.Human) {
+                        if (players[i].name == name) {
+                            return players[i];
+                        }
+                    }
+                }
+            }
+            Player.getHumanFromName = getHumanFromName;
+        })(Player = Manager.Player || (Manager.Player = {}));
+    })(Manager = App.Manager || (App.Manager = {}));
 })(App || (App = {}));
 var App;
 (function (App) {
