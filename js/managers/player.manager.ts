@@ -1,0 +1,7 @@
+﻿module App {
+
+    var players = [];
+
+
+
+}

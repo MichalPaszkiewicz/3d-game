@@ -4,24 +4,26 @@ module App.Comms {
 
     export var config = { "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] };
 
-    export var connection = {
+    export var connectionOptions = {
         "optional":
         [{ "DtlsSrtpKeyAgreement": true }, { "RtpDataChannels": true }]
     };
     
-    export var peerConnection = new webkitRTCPeerConnection(config, connection);
+    export function createPeerConnection(): RTCPeerConnection {
+        return new webkitRTCPeerConnection(config, connectionOptions);
+    }
 
     // attach all necessary functions to peerConnection.
-    export function attachRTCConnectionFunctions(connection: RTCPeerConnection) {
-        connection.onicecandidate = function (e) {
-            if (!connection || !e || !e.candidate) { return; }
+    export function attachRTCConnectionFunctions(connexion: RTCPeerConnection){
+        connexion.onicecandidate = function (e) {
+            if (!connexion || !e || !e.candidate) { return; }
             sendToServer("candidate", { candidate: e.candidate });
         }
     }
 
-    attachRTCConnectionFunctions(peerConnection);
-
-    export var dataChannel = peerConnection.createDataChannel("datachannel", { reliable: false });
+    export function createDataChannel(connexion: RTCPeerConnection): RTCDataChannel {
+        return connexion.createDataChannel("datachannel", { reliable: false });
+    }
 
     // attach all necessary functions to dataChannel
     export function attachRTCDataChannelFunctions(channel: RTCDataChannel) {
@@ -54,6 +56,9 @@ module App.Comms {
         channel.onerror = function () { log("DC ERROR!!!"); };
     }
 
+    export var peerConnection = createPeerConnection()
+    attachRTCConnectionFunctions(peerConnection);
+    export var dataChannel = createDataChannel(peerConnection);
     attachRTCDataChannelFunctions(dataChannel);
 
     export var sdpConstraints: RTCOptionalMediaConstraint = {
@@ -64,35 +69,35 @@ module App.Comms {
         }
     };
 
-    export function sendOffer() {
+    export function sendOffer(connexion: RTCPeerConnection) {
         "use strict";
-        peerConnection.createOffer(function (sdp: any) {
-            peerConnection.setLocalDescription(sdp);
+        connexion.createOffer(function (sdp: any) {
+            connexion.setLocalDescription(sdp);
             sendToServer("offer", { from: myID, offer: sdp });
             log("------ SENT OFFER ------");
         }, null, sdpConstraints);
     }
 
-    export function processIce(iceCandidate: RTCIceCandidate) {
+    export function processIce(connexion: RTCPeerConnection, iceCandidate: RTCIceCandidate) {
         "use strict";
-        peerConnection.addIceCandidate(new RTCIceCandidate(iceCandidate), function () {
+        connexion.addIceCandidate(new RTCIceCandidate(iceCandidate), function () {
             // todo: do something in here
         }, function () {
                 // todo: do something in here
             });
     }
 
-    export function processAnswer(answer) {
+    export function processAnswer(connexion: RTCPeerConnection, answer) {
         "use strict";
-        peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        connexion.setRemoteDescription(new RTCSessionDescription(answer));
         log("------ PROCESSED ANSWER ------");
     };
 
-    export function handleOffer(offer: any) {
-        peerConnection.setRemoteDescription(new RTCSessionDescription(offer.offer));
+    export function handleOffer(connexion: RTCPeerConnection, offer: any) {
+        connexion.setRemoteDescription(new RTCSessionDescription(offer.offer));
 
-        peerConnection.createAnswer(function (sdp) {
-            peerConnection.setLocalDescription(sdp);
+        connexion.createAnswer(function (sdp) {
+            connexion.setLocalDescription(sdp);
             sendToServer("answer", { to: offer.from, from: myID, answer: sdp });
             log("------ SENT ANSWER ------");
         }, null, sdpConstraints);

@@ -53,13 +53,13 @@
                 case "red":
                     log("(Server) " + dataJSON.message, "red");
                 case "offer":
-                    handleOffer(dataJSON.message);
+                    handleOffer(App.Comms.peerConnection, dataJSON.message);
                     break;
                 case "answer":
-                    processAnswer(dataJSON.message);
+                    processAnswer(App.Comms.peerConnection, dataJSON.message);
                     break;
                 case "candidate":
-                    processIce(dataJSON.message);
+                    processIce(App.Comms.peerConnection, dataJSON.message);
                     break;
                 default:
                     log(dataJSON);

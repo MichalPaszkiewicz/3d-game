@@ -60,17 +60,19 @@
         if (document.pointerLockElement === element ||
             document.mozPointerLockElement === element ||
             document.webkitPointerLockElement === element) {
+
             // pointer was just locked
             // enable the mousemove listener
             document.addEventListener("mousemove", moveCallback, false);
-
             document.addEventListener("mousedown", clickCallback, false);
+
         } else {
+
             // pointer was just unlocked
             // disable the mousemove listener
             document.removeEventListener("mousemove", moveCallback, false);
-
             document.removeEventListener("mousedown", clickCallback, false);
+
         }
     }
 

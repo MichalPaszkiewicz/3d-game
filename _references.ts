@@ -1,13 +1,17 @@
 ﻿// objects
 
 /// <reference path="js/objects/message.ts" />
+/// <reference path="js/objects/gamedata.ts" />
 /// <reference path="js/objects/me.ts" />
 /// <reference path="js/objects/player.ts" />
 /// <reference path="js/objects/human.ts" />
 /// <reference path="js/objects/ai.ts" />
 /// <reference path="js/objects/weapon.ts" />
 /// <reference path="js/objects/bullet.ts" />
-/// <reference path="js/objects/gamedata.ts" />
+
+// managers
+
+/// <reference path="js/managers/player.manager.ts" />
 
 // main
 

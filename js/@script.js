@@ -15,6 +15,22 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    (function (GameDataType) {
+        GameDataType[GameDataType["BULLET"] = 0] = "BULLET";
+        GameDataType[GameDataType["POSITION"] = 1] = "POSITION";
+    })(App.GameDataType || (App.GameDataType = {}));
+    var GameDataType = App.GameDataType;
+    var GameData = (function () {
+        function GameData(type, data) {
+            this.type = type;
+            this.data = data;
+        }
+        return GameData;
+    })();
+    App.GameData = GameData;
+})(App || (App = {}));
+var App;
+(function (App) {
     var ME;
     (function (ME) {
         ME.energy = 100;
@@ -231,19 +247,7 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
-    (function (GameDataType) {
-        GameDataType[GameDataType["BULLET"] = 0] = "BULLET";
-        GameDataType[GameDataType["POSITION"] = 1] = "POSITION";
-    })(App.GameDataType || (App.GameDataType = {}));
-    var GameDataType = App.GameDataType;
-    var GameData = (function () {
-        function GameData(type, data) {
-            this.type = type;
-            this.data = data;
-        }
-        return GameData;
-    })();
-    App.GameData = GameData;
+    var players = [];
 })(App || (App = {}));
 var App;
 (function (App) {
@@ -807,22 +811,27 @@ var App;
     (function (Comms) {
         var log = App.Display.log;
         Comms.config = { "iceServers": [{ "url": "stun:stun.l.google.com:19302" }] };
-        Comms.connection = {
+        Comms.connectionOptions = {
             "optional": [{ "DtlsSrtpKeyAgreement": true }, { "RtpDataChannels": true }]
         };
-        Comms.peerConnection = new webkitRTCPeerConnection(Comms.config, Comms.connection);
+        function createPeerConnection() {
+            return new webkitRTCPeerConnection(Comms.config, Comms.connectionOptions);
+        }
+        Comms.createPeerConnection = createPeerConnection;
         // attach all necessary functions to peerConnection.
-        function attachRTCConnectionFunctions(connection) {
-            connection.onicecandidate = function (e) {
-                if (!connection || !e || !e.candidate) {
+        function attachRTCConnectionFunctions(connexion) {
+            connexion.onicecandidate = function (e) {
+                if (!connexion || !e || !e.candidate) {
                     return;
                 }
                 Comms.sendToServer("candidate", { candidate: e.candidate });
             };
         }
         Comms.attachRTCConnectionFunctions = attachRTCConnectionFunctions;
-        attachRTCConnectionFunctions(Comms.peerConnection);
-        Comms.dataChannel = Comms.peerConnection.createDataChannel("datachannel", { reliable: false });
+        function createDataChannel(connexion) {
+            return connexion.createDataChannel("datachannel", { reliable: false });
+        }
+        Comms.createDataChannel = createDataChannel;
         // attach all necessary functions to dataChannel
         function attachRTCDataChannelFunctions(channel) {
             channel.onmessage = function (e) {
@@ -858,6 +867,9 @@ var App;
             };
         }
         Comms.attachRTCDataChannelFunctions = attachRTCDataChannelFunctions;
+        Comms.peerConnection = createPeerConnection();
+        attachRTCConnectionFunctions(Comms.peerConnection);
+        Comms.dataChannel = createDataChannel(Comms.peerConnection);
         attachRTCDataChannelFunctions(Comms.dataChannel);
         Comms.sdpConstraints = {
             "mandatory": {
@@ -865,35 +877,35 @@ var App;
                 "OfferToReceiveVideo": false
             }
         };
-        function sendOffer() {
+        function sendOffer(connexion) {
             "use strict";
-            Comms.peerConnection.createOffer(function (sdp) {
-                Comms.peerConnection.setLocalDescription(sdp);
+            connexion.createOffer(function (sdp) {
+                connexion.setLocalDescription(sdp);
                 Comms.sendToServer("offer", { from: Comms.myID, offer: sdp });
                 log("------ SENT OFFER ------");
             }, null, Comms.sdpConstraints);
         }
         Comms.sendOffer = sendOffer;
-        function processIce(iceCandidate) {
+        function processIce(connexion, iceCandidate) {
             "use strict";
-            Comms.peerConnection.addIceCandidate(new RTCIceCandidate(iceCandidate), function () {
+            connexion.addIceCandidate(new RTCIceCandidate(iceCandidate), function () {
                 // todo: do something in here
             }, function () {
                 // todo: do something in here
             });
         }
         Comms.processIce = processIce;
-        function processAnswer(answer) {
+        function processAnswer(connexion, answer) {
             "use strict";
-            Comms.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+            connexion.setRemoteDescription(new RTCSessionDescription(answer));
             log("------ PROCESSED ANSWER ------");
         }
         Comms.processAnswer = processAnswer;
         ;
-        function handleOffer(offer) {
-            Comms.peerConnection.setRemoteDescription(new RTCSessionDescription(offer.offer));
-            Comms.peerConnection.createAnswer(function (sdp) {
-                Comms.peerConnection.setLocalDescription(sdp);
+        function handleOffer(connexion, offer) {
+            connexion.setRemoteDescription(new RTCSessionDescription(offer.offer));
+            connexion.createAnswer(function (sdp) {
+                connexion.setLocalDescription(sdp);
                 Comms.sendToServer("answer", { to: offer.from, from: Comms.myID, answer: sdp });
                 log("------ SENT ANSWER ------");
             }, null, Comms.sdpConstraints);
@@ -948,13 +960,13 @@ var App;
                     case "red":
                         log("(Server) " + dataJSON.message, "red");
                     case "offer":
-                        Comms.handleOffer(dataJSON.message);
+                        Comms.handleOffer(App.Comms.peerConnection, dataJSON.message);
                         break;
                     case "answer":
-                        Comms.processAnswer(dataJSON.message);
+                        Comms.processAnswer(App.Comms.peerConnection, dataJSON.message);
                         break;
                     case "candidate":
-                        Comms.processIce(dataJSON.message);
+                        Comms.processIce(App.Comms.peerConnection, dataJSON.message);
                         break;
                     default:
                         log(dataJSON);
@@ -985,13 +997,15 @@ var App;
 })(App || (App = {}));
 // objects
 /// <reference path="js/objects/message.ts" />
+/// <reference path="js/objects/gamedata.ts" />
 /// <reference path="js/objects/me.ts" />
 /// <reference path="js/objects/player.ts" />
 /// <reference path="js/objects/human.ts" />
 /// <reference path="js/objects/ai.ts" />
 /// <reference path="js/objects/weapon.ts" />
 /// <reference path="js/objects/bullet.ts" />
-/// <reference path="js/objects/gamedata.ts" />
+// managers
+/// <reference path="js/managers/player.manager.ts" />
 // main
 /// <reference path="js/main.ts" />
 /// <reference path="js/canvas.ts" />
