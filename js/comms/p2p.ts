@@ -38,7 +38,7 @@ module App.Comms {
                         log("(webRTC) " + dataJSON.message, "red");
                         break;
                     case "game":
-                        processGameData(dataJSON.message);
+                        App.Display.processGameData(dataJSON.message);
                         break;
                     default:
                         log(dataJSON);

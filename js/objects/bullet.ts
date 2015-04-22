@@ -1,6 +1,4 @@
 ﻿module App.Combat {
-    import camera = Display.camera;
-
     export enum BulletType {
         NORMAL,
         FAST
@@ -51,7 +49,7 @@
         settings: BulletSetting
         velocity: THREE.Vector3;
         updatePosition: () => void;
-        constructor(ammoType: BulletType, mesh: THREE.Mesh, settings: BulletSetting) {
+        constructor(ammoType: BulletType, mesh: THREE.Mesh, settings: BulletSetting, camera: THREE.Camera) {
             this.type = ammoType;
             this.mesh = mesh;
             this.age = 0;
@@ -69,9 +67,9 @@
     }
 
     export class ImportBullet extends Bullet {
-        constructor(ammoType: BulletType, settings: BulletSetting) {
+        constructor(ammoType: BulletType, settings: BulletSetting, camera: THREE.Camera) {
             var mesh = getBulletMesh(ammoType);
-            super(ammoType, mesh, settings);
+            super(ammoType, mesh, settings, camera);
             this.updatePosition = function () {
                 this.mesh.position.x += this.velocity.x * this.settings.bulletSpeed;
                 this.mesh.position.y += this.velocity.y * this.settings.bulletSpeed;
@@ -82,11 +80,11 @@
     }
 
     export function addBulletType(ammoType: BulletType, scene: THREE.Scene, camera: THREE.Camera, fromWeapon: boolean): Bullet{
-        var bullet = new Bullet(ammoType, getBulletMesh(ammoType), getBulletSettings(ammoType));
+        var bullet = new Bullet(ammoType, getBulletMesh(ammoType), getBulletSettings(ammoType), camera);
 
         var vector = new THREE.Vector3();
         if (fromWeapon) {
-            vector.setFromMatrixPosition(App.Combat.weapon.mesh.matrixWorld);
+            vector.setFromMatrixPosition(App.Display.weapon.mesh.matrixWorld);
         }
         else {
             vector.setFromMatrixPosition(App.Display.camera.matrixWorld);

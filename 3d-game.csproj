@@ -133,6 +133,7 @@
     <TypeScriptCompile Include="Scripts\typings\webaudioapi\waa.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\webrtc\MediaStream.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\webrtc\RTCPeerConnection.d.ts" />
+    <TypeScriptCompile Include="_references.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="server\node_modules\ws\.npmignore" />

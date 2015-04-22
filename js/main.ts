@@ -42,24 +42,4 @@
         
         App.Comms.dataChannel.send(message.asString());
     }
-
-    export function processGameData(data: IGameData) {
-        switch (data.type) {
-            case GameDataType.BULLET:
-                var bullet = new App.Combat.ImportBullet(data.data["type"], data.data["settings"]);
-                bullet.mesh.position.x = data.data["position"].x;
-                bullet.mesh.position.y = data.data["position"].y;
-                bullet.mesh.position.z = data.data["position"].z;
-                bullet.velocity = data.data["velocity"];
-                App.Display.addBullet(bullet);
-                App.Display.scene.add(bullet.mesh);
-                return;
-            case GameDataType.POSITION:
-                App.Display.handleMovement(data.data);
-                return;
-            default:
-                logOrDefault("Error with processing game data", "orange");
-                return;
-        }
-    }
 }

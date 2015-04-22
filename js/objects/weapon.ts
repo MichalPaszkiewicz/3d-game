@@ -72,7 +72,4 @@
         scene.add(camera);
         return bullet;
     }
-
-    export var weapon = Combat.addWeaponType(App.Combat.WeaponType.NORMAL, App.Display.scene, App.Display.camera);
-
 }

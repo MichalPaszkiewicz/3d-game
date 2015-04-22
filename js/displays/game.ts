@@ -118,7 +118,7 @@
     }
 
     function sendThePosition() {
-        if (sendGameDataOrKill != null && GameDataType != null && App.Comms.dataChannel.readyState == "open") {
+        if (sendGameDataOrKill != null && GameDataType != null && App.Comms != null && App.Comms.dataChannel.readyState == "open") {
             try {
                 sendGameDataOrKill(GameDataType.POSITION, {
                     x: camera.position.x,
@@ -218,4 +218,26 @@
     var light = new THREE.PointLight(0xff0000, 1, 100);
     light.position.set(5, 5, 1);
     scene.add(light);
+
+    export var weapon = Combat.addWeaponType(App.Combat.WeaponType.NORMAL, App.Display.scene, App.Display.camera);
+
+    export function processGameData(data: IGameData) {
+        switch (data.type) {
+            case GameDataType.BULLET:
+                var bullet = new App.Combat.ImportBullet(data.data["type"], data.data["settings"], App.Display.camera);
+                bullet.mesh.position.x = data.data["position"].x;
+                bullet.mesh.position.y = data.data["position"].y;
+                bullet.mesh.position.z = data.data["position"].z;
+                bullet.velocity = data.data["velocity"];
+                App.Display.addBullet(bullet);
+                App.Display.scene.add(bullet.mesh);
+                return;
+            case GameDataType.POSITION:
+                App.Display.handleMovement(data.data);
+                return;
+            default:
+                log("Error with processing game data", "orange");
+                return;
+        }
+    }
 }
