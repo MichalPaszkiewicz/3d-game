@@ -109,6 +109,7 @@
     <TypeScriptCompile Include="js\displays\logger.ts" />
     <TypeScriptCompile Include="js\lib\pointerlock.d.ts" />
     <TypeScriptCompile Include="js\main.ts" />
+    <TypeScriptCompile Include="js\managers\player.manager.ts" />
     <TypeScriptCompile Include="js\objects\AI.ts" />
     <TypeScriptCompile Include="js\objects\bullet.ts" />
     <TypeScriptCompile Include="js\objects\gameData.ts" />
