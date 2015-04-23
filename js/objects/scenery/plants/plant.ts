@@ -1,10 +1,10 @@
 ﻿module App.Scene.Plant {
 
-    class Plant {
+    export class Plant extends SceneItem{
         position: THREE.Vector3;
 
         constructor() {
-
+            super();
         }
 
     }

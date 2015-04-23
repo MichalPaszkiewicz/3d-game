@@ -247,6 +247,52 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    var Scene;
+    (function (Scene) {
+        var SceneItem = (function () {
+            function SceneItem() {
+            }
+            return SceneItem;
+        })();
+        Scene.SceneItem = SceneItem;
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Scene;
+    (function (Scene) {
+        var Building;
+        (function (_Building) {
+            var Building = (function (_super) {
+                __extends(Building, _super);
+                function Building() {
+                    _super.call(this);
+                }
+                return Building;
+            })(Scene.SceneItem);
+            _Building.Building = Building;
+        })(Building = Scene.Building || (Scene.Building = {}));
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Scene;
+    (function (Scene) {
+        var Plant;
+        (function (_Plant) {
+            var Plant = (function (_super) {
+                __extends(Plant, _super);
+                function Plant() {
+                    _super.call(this);
+                }
+                return Plant;
+            })(Scene.SceneItem);
+            _Plant.Plant = Plant;
+        })(Plant = Scene.Plant || (Scene.Plant = {}));
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
     var Manager;
     (function (Manager) {
         var Player;
@@ -344,6 +390,16 @@ var App;
             }
             Player.getHumanFromName = getHumanFromName;
         })(Player = Manager.Player || (Manager.Player = {}));
+    })(Manager = App.Manager || (App.Manager = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Manager;
+    (function (Manager) {
+        var Scene;
+        (function (Scene) {
+            var sceneItems = [];
+        })(Scene = Manager.Scene || (Manager.Scene = {}));
     })(Manager = App.Manager || (App.Manager = {}));
 })(App || (App = {}));
 var App;
@@ -1092,17 +1148,23 @@ var App;
         Comms.sendToServer = sendToServer;
     })(Comms = App.Comms || (App.Comms = {}));
 })(App || (App = {}));
+// interfaces
+/// <reference path="js/interfaces/icollidable.ts" />
 // objects
 /// <reference path="js/objects/message.ts" />
 /// <reference path="js/objects/gamedata.ts" />
 /// <reference path="js/objects/me.ts" />
-/// <reference path="js/objects/player.ts" />
-/// <reference path="js/objects/human.ts" />
-/// <reference path="js/objects/ai.ts" />
+/// <reference path="js/objects/players/player.ts" />
+/// <reference path="js/objects/players/human.ts" />
+/// <reference path="js/objects/players/ai.ts" />
 /// <reference path="js/objects/weapon.ts" />
 /// <reference path="js/objects/bullet.ts" />
+/// <reference path="js/objects/scenery/sceneitem.ts" />
+/// <reference path="js/objects/scenery/buildings/building.ts" />
+/// <reference path="js/objects/scenery/plants/plant.ts" />
 // managers
 /// <reference path="js/managers/player.manager.ts" />
+/// <reference path="js/managers/scene.manager.ts" />
 // main
 /// <reference path="js/main.ts" />
 /// <reference path="js/canvas.ts" />
@@ -1118,32 +1180,4 @@ var App;
 // comms
 /// <reference path="js/comms/p2p.ts" />
 /// <reference path="js/comms/socket.ts" /> 
-var App;
-(function (App) {
-    var Scene;
-    (function (Scene) {
-        var Building;
-        (function (_Building) {
-            var Building = (function () {
-                function Building() {
-                }
-                return Building;
-            })();
-        })(Building = Scene.Building || (Scene.Building = {}));
-    })(Scene = App.Scene || (App.Scene = {}));
-})(App || (App = {}));
-var App;
-(function (App) {
-    var Scene;
-    (function (Scene) {
-        var Plant;
-        (function (_Plant) {
-            var Plant = (function () {
-                function Plant() {
-                }
-                return Plant;
-            })();
-        })(Plant = Scene.Plant || (Scene.Plant = {}));
-    })(Scene = App.Scene || (App.Scene = {}));
-})(App || (App = {}));
 //# sourceMappingURL=@script.js.map

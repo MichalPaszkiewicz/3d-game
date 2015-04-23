@@ -1,17 +1,28 @@
-﻿// objects
+﻿
+// interfaces
+/// <reference path="js/interfaces/icollidable.ts" />
+
+// objects
 
 /// <reference path="js/objects/message.ts" />
 /// <reference path="js/objects/gamedata.ts" />
 /// <reference path="js/objects/me.ts" />
-/// <reference path="js/objects/player.ts" />
-/// <reference path="js/objects/human.ts" />
-/// <reference path="js/objects/ai.ts" />
+
+/// <reference path="js/objects/players/player.ts" />
+/// <reference path="js/objects/players/human.ts" />
+/// <reference path="js/objects/players/ai.ts" />
+
 /// <reference path="js/objects/weapon.ts" />
 /// <reference path="js/objects/bullet.ts" />
+
+/// <reference path="js/objects/scenery/sceneitem.ts" />
+/// <reference path="js/objects/scenery/buildings/building.ts" />
+/// <reference path="js/objects/scenery/plants/plant.ts" />
 
 // managers
 
 /// <reference path="js/managers/player.manager.ts" />
+/// <reference path="js/managers/scene.manager.ts" />
 
 // main
 

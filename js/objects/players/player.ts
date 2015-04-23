@@ -1,6 +1,6 @@
 ﻿module App {
 
-    export class Player {
+    export class Player implements ICollidable {
 
         energy: number;
 
