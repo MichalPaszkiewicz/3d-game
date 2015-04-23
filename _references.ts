@@ -16,6 +16,7 @@
 /// <reference path="js/objects/players/ai.ts" />
 
 /// <reference path="js/objects/scenery/sceneitem.ts" />
+/// <reference path="js/objects/scenery/layout/plane.ts" />
 /// <reference path="js/objects/scenery/buildings/building.ts" />
 /// <reference path="js/objects/scenery/buildings/block.ts" />
 /// <reference path="js/objects/scenery/plants/plant.ts" />

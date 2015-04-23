@@ -273,6 +273,27 @@ var App;
 (function (App) {
     var Scene;
     (function (Scene) {
+        var Layout;
+        (function (Layout) {
+            var Plane = (function (_super) {
+                __extends(Plane, _super);
+                function Plane(size, scene) {
+                    var geometry = new THREE.PlaneGeometry(size.x, size.y, 32);
+                    var material = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
+                    var plane = new THREE.Mesh(geometry, material);
+                    plane.rotation.x += Math.PI / 2;
+                    _super.call(this, plane, scene);
+                }
+                return Plane;
+            })(Scene.SceneItem);
+            Layout.Plane = Plane;
+        })(Layout = Scene.Layout || (Scene.Layout = {}));
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Scene;
+    (function (Scene) {
         var Building;
         (function (_Building) {
             var Building = (function (_super) {
@@ -612,11 +633,7 @@ var App;
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
         var cube = new App.Scene.Building.Block(Display.scene, new THREE.Vector3(0, 0.5, 0));
-        var geometry2 = new THREE.PlaneGeometry(20, 20, 32);
-        var material2 = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
-        var plane = new THREE.Mesh(geometry2, material2);
-        plane.rotation.x += Math.PI / 2;
-        Display.scene.add(plane);
+        var plane = new App.Scene.Layout.Plane(new THREE.Vector2(20, 20), Display.scene);
         Display.camera.position.z = 5;
         renderer.render(Display.scene, Display.camera);
         // var controls = new THREE.OrbitControls(camera);
@@ -1191,6 +1208,7 @@ var App;
 /// <reference path="js/objects/players/human.ts" />
 /// <reference path="js/objects/players/ai.ts" />
 /// <reference path="js/objects/scenery/sceneitem.ts" />
+/// <reference path="js/objects/scenery/layout/plane.ts" />
 /// <reference path="js/objects/scenery/buildings/building.ts" />
 /// <reference path="js/objects/scenery/buildings/block.ts" />
 /// <reference path="js/objects/scenery/plants/plant.ts" />

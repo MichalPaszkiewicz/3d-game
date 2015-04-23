@@ -15,11 +15,7 @@
 
     var cube = new App.Scene.Building.Block(scene, new THREE.Vector3(0, 0.5, 0));
 
-    var geometry2 = new THREE.PlaneGeometry(20, 20, 32);
-    var material2 = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
-    var plane = new THREE.Mesh(geometry2, material2);
-    plane.rotation.x += Math.PI / 2;
-    scene.add(plane);
+    var plane = new App.Scene.Layout.Plane(new THREE.Vector2(20, 20), scene);
 
     camera.position.z = 5;
     renderer.render(scene, camera);

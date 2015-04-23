@@ -120,6 +120,7 @@
     <TypeScriptCompile Include="js\objects\players\human.ts" />
     <TypeScriptCompile Include="js\objects\me.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
+    <TypeScriptCompile Include="js\objects\scenery\layout\plane.ts" />
     <TypeScriptCompile Include="js\objects\scenery\plants\plant.ts" />
     <TypeScriptCompile Include="js\objects\players\player.ts" />
     <TypeScriptCompile Include="js\objects\scenery\sceneItem.ts" />
