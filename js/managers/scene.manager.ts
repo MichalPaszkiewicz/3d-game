@@ -1,5 +1,5 @@
 ﻿module App.Manager.Scene {
 
-    var sceneItems = [];
+    var sceneItems: App.Scene.SceneItem[] = [];
 
 }
