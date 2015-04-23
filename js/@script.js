@@ -457,6 +457,10 @@ var App;
         var Scene;
         (function (Scene) {
             var sceneItems = [];
+            function AddSceneItem(item) {
+                sceneItems.push(item);
+            }
+            Scene.AddSceneItem = AddSceneItem;
         })(Scene = Manager.Scene || (Manager.Scene = {}));
     })(Manager = App.Manager || (App.Manager = {}));
 })(App || (App = {}));
@@ -632,8 +636,8 @@ var App;
         var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        var cube = new App.Scene.Building.Block(Display.scene, new THREE.Vector3(0, 0.5, 0));
-        var plane = new App.Scene.Layout.Plane(new THREE.Vector2(20, 20), Display.scene);
+        App.Manager.Scene.AddSceneItem(new App.Scene.Building.Block(Display.scene, new THREE.Vector3(0, 0.5, 0)));
+        App.Manager.Scene.AddSceneItem(new App.Scene.Layout.Plane(new THREE.Vector2(20, 20), Display.scene));
         Display.camera.position.z = 5;
         renderer.render(Display.scene, Display.camera);
         // var controls = new THREE.OrbitControls(camera);

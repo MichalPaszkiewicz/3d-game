@@ -13,9 +13,8 @@
 
     document.body.appendChild(renderer.domElement);
 
-    var cube = new App.Scene.Building.Block(scene, new THREE.Vector3(0, 0.5, 0));
-
-    var plane = new App.Scene.Layout.Plane(new THREE.Vector2(20, 20), scene);
+    App.Manager.Scene.AddSceneItem(new App.Scene.Building.Block(scene, new THREE.Vector3(0, 0.5, 0)));
+    App.Manager.Scene.AddSceneItem(new App.Scene.Layout.Plane(new THREE.Vector2(20, 20), scene));
 
     camera.position.z = 5;
     renderer.render(scene, camera);
