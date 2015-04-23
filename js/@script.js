@@ -231,13 +231,7 @@ var App;
             var vector = new THREE.Vector3();
             if (fromWeapon) {
                 vector.setFromMatrixPosition(App.Display.weapon.mesh.matrixWorld);
-                var theta = Math.PI * Math.random();
-                var spread = 0.1;
-                var spreadDistance = (Math.random() - 0.5) * spread;
-                bullet.velocity.applyAxisAngle(new THREE.Vector3(1, 0, 0), spreadDistance + 0.1);
-                bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 1, 0), spreadDistance + 0.05);
-                bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), spreadDistance);
-                bullet.velocity;
+                addBulletSpread(bullet);
             }
             else {
                 vector.setFromMatrixPosition(App.Display.camera.matrixWorld);
@@ -250,6 +244,13 @@ var App;
             return bullet;
         }
         Combat.addBulletType = addBulletType;
+        function addBulletSpread(bullet) {
+            var spread = 0.1;
+            var spreadDistanceX = (Math.random() - 0.5) * spread;
+            var spreadDistanceY = (Math.random() - 0.5) * spread;
+            bullet.velocity.applyAxisAngle(new THREE.Vector3(1, 0, 0), spreadDistanceX + 0.05);
+            bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 1, 0), spreadDistanceY + 0.05);
+        }
     })(Combat = App.Combat || (App.Combat = {}));
 })(App || (App = {}));
 var App;
