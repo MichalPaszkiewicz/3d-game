@@ -279,6 +279,14 @@ var App;
                 }
             }
             Player.Do = Do;
+            function DoTo(x, name) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].name == name) {
+                        x(players[i]);
+                    }
+                }
+            }
+            Player.DoTo = DoTo;
             function AIDo(x) {
                 Do(function (currentPlayer) {
                     if (currentPlayer instanceof App.AI) {
@@ -1110,4 +1118,32 @@ var App;
 // comms
 /// <reference path="js/comms/p2p.ts" />
 /// <reference path="js/comms/socket.ts" /> 
+var App;
+(function (App) {
+    var Scene;
+    (function (Scene) {
+        var Building;
+        (function (_Building) {
+            var Building = (function () {
+                function Building() {
+                }
+                return Building;
+            })();
+        })(Building = Scene.Building || (Scene.Building = {}));
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Scene;
+    (function (Scene) {
+        var Plant;
+        (function (_Plant) {
+            var Plant = (function () {
+                function Plant() {
+                }
+                return Plant;
+            })();
+        })(Plant = Scene.Plant || (Scene.Plant = {}));
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
 //# sourceMappingURL=@script.js.map

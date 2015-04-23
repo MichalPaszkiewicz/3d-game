@@ -111,11 +111,13 @@
     <TypeScriptCompile Include="js\main.ts" />
     <TypeScriptCompile Include="js\managers\player.manager.ts" />
     <TypeScriptCompile Include="js\objects\AI.ts" />
+    <TypeScriptCompile Include="js\objects\buildings\building.ts" />
     <TypeScriptCompile Include="js\objects\bullet.ts" />
     <TypeScriptCompile Include="js\objects\gameData.ts" />
     <TypeScriptCompile Include="js\objects\human.ts" />
     <TypeScriptCompile Include="js\objects\me.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
+    <TypeScriptCompile Include="js\objects\plants\plant.ts" />
     <TypeScriptCompile Include="js\objects\player.ts" />
     <TypeScriptCompile Include="js\objects\weapon.ts" />
     <TypeScriptCompile Include="Scripts\typings\threejs\detector.d.ts" />

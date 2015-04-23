@@ -30,6 +30,14 @@
         }
     }
 
+    export function DoTo(x: (player: Player) => void, name: string) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].name == name) {
+                x(players[i]);
+            }
+        }
+    }
+
     export function AIDo(x: (player: Player) => void) {
         Do(function (currentPlayer) {
             if (currentPlayer instanceof AI) {
