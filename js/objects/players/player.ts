@@ -12,6 +12,10 @@
 
         updatePosition: (x: number, y: number, z: number) => void;
 
+        weapon: App.Combat.Weapon;
+
+        mesh: THREE.Mesh;
+
         constructor(name : string) {
 
             this.name = name;

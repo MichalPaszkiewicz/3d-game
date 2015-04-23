@@ -2,6 +2,7 @@
 
     export interface ICollidable {
 
+        mesh: THREE.Mesh;
 
     }
 

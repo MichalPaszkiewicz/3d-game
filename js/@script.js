@@ -39,53 +39,6 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
-    var Player = (function () {
-        function Player(name) {
-            this.name = name;
-            var me = this;
-            this.energy = 100;
-            this.health = 100;
-            this.position = new THREE.Vector3();
-            this.updatePosition = function (x, y, z) {
-                me.position.x = x;
-                me.position.y = y;
-                me.position.z = z;
-            };
-        }
-        return Player;
-    })();
-    App.Player = Player;
-})(App || (App = {}));
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var App;
-(function (App) {
-    var Human = (function (_super) {
-        __extends(Human, _super);
-        function Human(name) {
-            _super.call(this, name);
-        }
-        return Human;
-    })(App.Player);
-    App.Human = Human;
-})(App || (App = {}));
-var App;
-(function (App) {
-    var AI = (function (_super) {
-        __extends(AI, _super);
-        function AI(name) {
-            _super.call(this, name);
-        }
-        return AI;
-    })(App.Player);
-    App.AI = AI;
-})(App || (App = {}));
-var App;
-(function (App) {
     var Combat;
     (function (Combat) {
         (function (WeaponType) {
@@ -154,6 +107,12 @@ var App;
         Combat.addWeaponType = addWeaponType;
     })(Combat = App.Combat || (App.Combat = {}));
 })(App || (App = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var App;
 (function (App) {
     var Combat;
@@ -248,10 +207,53 @@ var App;
             var spread = 0.1;
             var spreadDistanceX = (Math.random() - 0.5) * spread;
             var spreadDistanceY = (Math.random() - 0.5) * spread;
+            var spreadDistanceZ = (Math.random() - 0.5) * spread;
             bullet.velocity.applyAxisAngle(new THREE.Vector3(1, 0, 0), spreadDistanceX + 0.05);
             bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 1, 0), spreadDistanceY + 0.05);
+            bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), spreadDistanceZ + 0.05);
         }
     })(Combat = App.Combat || (App.Combat = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Player = (function () {
+        function Player(name) {
+            this.name = name;
+            var me = this;
+            this.energy = 100;
+            this.health = 100;
+            this.position = new THREE.Vector3();
+            this.updatePosition = function (x, y, z) {
+                me.position.x = x;
+                me.position.y = y;
+                me.position.z = z;
+            };
+        }
+        return Player;
+    })();
+    App.Player = Player;
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Human = (function (_super) {
+        __extends(Human, _super);
+        function Human(name) {
+            _super.call(this, name);
+        }
+        return Human;
+    })(App.Player);
+    App.Human = Human;
+})(App || (App = {}));
+var App;
+(function (App) {
+    var AI = (function (_super) {
+        __extends(AI, _super);
+        function AI(name) {
+            _super.call(this, name);
+        }
+        return AI;
+    })(App.Player);
+    App.AI = AI;
 })(App || (App = {}));
 var App;
 (function (App) {
@@ -1162,11 +1164,11 @@ var App;
 /// <reference path="js/objects/message.ts" />
 /// <reference path="js/objects/gamedata.ts" />
 /// <reference path="js/objects/me.ts" />
+/// <reference path="js/objects/weapon.ts" />
+/// <reference path="js/objects/bullet.ts" />
 /// <reference path="js/objects/players/player.ts" />
 /// <reference path="js/objects/players/human.ts" />
 /// <reference path="js/objects/players/ai.ts" />
-/// <reference path="js/objects/weapon.ts" />
-/// <reference path="js/objects/bullet.ts" />
 /// <reference path="js/objects/scenery/sceneitem.ts" />
 /// <reference path="js/objects/scenery/buildings/building.ts" />
 /// <reference path="js/objects/scenery/plants/plant.ts" />

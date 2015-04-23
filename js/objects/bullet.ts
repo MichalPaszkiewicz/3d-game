@@ -105,8 +105,10 @@
         var spread = 0.1;
         var spreadDistanceX = (Math.random() - 0.5) * spread;
         var spreadDistanceY = (Math.random() - 0.5) * spread;
+        var spreadDistanceZ = (Math.random() - 0.5) * spread;
 
         bullet.velocity.applyAxisAngle(new THREE.Vector3(1, 0, 0), spreadDistanceX + 0.05);
         bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 1, 0), spreadDistanceY + 0.05);
+        bullet.velocity.applyAxisAngle(new THREE.Vector3(0, 0, 1), spreadDistanceZ + 0.05);
     }
 }

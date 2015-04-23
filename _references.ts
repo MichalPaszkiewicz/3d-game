@@ -9,12 +9,12 @@
 /// <reference path="js/objects/gamedata.ts" />
 /// <reference path="js/objects/me.ts" />
 
+/// <reference path="js/objects/weapon.ts" />
+/// <reference path="js/objects/bullet.ts" />
+
 /// <reference path="js/objects/players/player.ts" />
 /// <reference path="js/objects/players/human.ts" />
 /// <reference path="js/objects/players/ai.ts" />
-
-/// <reference path="js/objects/weapon.ts" />
-/// <reference path="js/objects/bullet.ts" />
 
 /// <reference path="js/objects/scenery/sceneitem.ts" />
 /// <reference path="js/objects/scenery/buildings/building.ts" />
