@@ -13,15 +13,7 @@
 
     document.body.appendChild(renderer.domElement);
 
-    var geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
-    var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-    var cube = new THREE.Mesh(geometry, material);
-    cube.translateY(0.5);
-    var egh = new THREE.EdgesHelper(cube, 0x000000);
-
-    scene.add(cube);
-    scene.add(egh);
+    var cube = new App.Scene.Building.Block(scene, new THREE.Vector3(0, 0.5, 0));
 
     var geometry2 = new THREE.PlaneGeometry(20, 20, 32);
     var material2 = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
@@ -31,8 +23,6 @@
 
     camera.position.z = 5;
     renderer.render(scene, camera);
-
-
 
     // var controls = new THREE.OrbitControls(camera);
     // controls.addEventListener('change', render);

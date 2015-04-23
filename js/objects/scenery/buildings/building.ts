@@ -1,10 +1,9 @@
 ﻿module App.Scene.Building {
 
     export class Building extends SceneItem {
-        position: THREE.Vector3;
 
-        constructor() {
-            super();
+        constructor(mesh: THREE.Mesh, scene: THREE.Scene) {
+            super(mesh, scene);
         }
     }
 

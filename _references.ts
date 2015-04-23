@@ -1,5 +1,4 @@
-﻿
-// interfaces
+﻿// interfaces
 
 /// <reference path="js/interfaces/icollidable.ts" />
 
@@ -18,6 +17,7 @@
 
 /// <reference path="js/objects/scenery/sceneitem.ts" />
 /// <reference path="js/objects/scenery/buildings/building.ts" />
+/// <reference path="js/objects/scenery/buildings/block.ts" />
 /// <reference path="js/objects/scenery/plants/plant.ts" />
 
 // managers

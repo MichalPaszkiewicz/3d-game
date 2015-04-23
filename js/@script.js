@@ -260,7 +260,9 @@ var App;
     var Scene;
     (function (Scene) {
         var SceneItem = (function () {
-            function SceneItem() {
+            function SceneItem(mesh, scene) {
+                this.mesh = mesh;
+                scene.add(this.mesh);
             }
             return SceneItem;
         })();
@@ -275,8 +277,8 @@ var App;
         (function (_Building) {
             var Building = (function (_super) {
                 __extends(Building, _super);
-                function Building() {
-                    _super.call(this);
+                function Building(mesh, scene) {
+                    _super.call(this, mesh, scene);
                 }
                 return Building;
             })(Scene.SceneItem);
@@ -288,12 +290,37 @@ var App;
 (function (App) {
     var Scene;
     (function (Scene) {
+        var Building;
+        (function (Building) {
+            var Block = (function (_super) {
+                __extends(Block, _super);
+                function Block(scene, position) {
+                    var geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
+                    var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                    var cube = new THREE.Mesh(geometry, material);
+                    cube.translateX(position.x);
+                    cube.translateY(position.y);
+                    cube.translateZ(position.z);
+                    _super.call(this, cube, scene);
+                    var egh = new THREE.EdgesHelper(cube, 0x000000);
+                    scene.add(egh);
+                }
+                return Block;
+            })(Building.Building);
+            Building.Block = Block;
+        })(Building = Scene.Building || (Scene.Building = {}));
+    })(Scene = App.Scene || (App.Scene = {}));
+})(App || (App = {}));
+var App;
+(function (App) {
+    var Scene;
+    (function (Scene) {
         var Plant;
         (function (_Plant) {
             var Plant = (function (_super) {
                 __extends(Plant, _super);
-                function Plant() {
-                    _super.call(this);
+                function Plant(mesh, scene) {
+                    _super.call(this, mesh, scene);
                 }
                 return Plant;
             })(Scene.SceneItem);
@@ -584,13 +611,7 @@ var App;
         var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        var geometry = new THREE.BoxGeometry(1, 1, 1, 5, 5, 5);
-        var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        var cube = new THREE.Mesh(geometry, material);
-        cube.translateY(0.5);
-        var egh = new THREE.EdgesHelper(cube, 0x000000);
-        Display.scene.add(cube);
-        Display.scene.add(egh);
+        var cube = new App.Scene.Building.Block(Display.scene, new THREE.Vector3(0, 0.5, 0));
         var geometry2 = new THREE.PlaneGeometry(20, 20, 32);
         var material2 = new THREE.MeshBasicMaterial({ color: 0xbbffb1, side: THREE.DoubleSide });
         var plane = new THREE.Mesh(geometry2, material2);
@@ -1171,6 +1192,7 @@ var App;
 /// <reference path="js/objects/players/ai.ts" />
 /// <reference path="js/objects/scenery/sceneitem.ts" />
 /// <reference path="js/objects/scenery/buildings/building.ts" />
+/// <reference path="js/objects/scenery/buildings/block.ts" />
 /// <reference path="js/objects/scenery/plants/plant.ts" />
 // managers
 /// <reference path="js/managers/player.manager.ts" />

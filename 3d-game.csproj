@@ -113,6 +113,7 @@
     <TypeScriptCompile Include="js\managers\player.manager.ts" />
     <TypeScriptCompile Include="js\managers\scene.manager.ts" />
     <TypeScriptCompile Include="js\objects\players\AI.ts" />
+    <TypeScriptCompile Include="js\objects\scenery\buildings\block.ts" />
     <TypeScriptCompile Include="js\objects\scenery\buildings\building.ts" />
     <TypeScriptCompile Include="js\objects\bullet.ts" />
     <TypeScriptCompile Include="js\objects\gameData.ts" />

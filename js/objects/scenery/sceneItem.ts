@@ -4,8 +4,9 @@
 
         mesh: THREE.Mesh;
 
-        constructor() {
-
+        constructor(mesh: THREE.Mesh, scene: THREE.Scene) {
+            this.mesh = mesh;
+            scene.add(this.mesh);
         }
 
     }
