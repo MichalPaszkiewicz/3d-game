@@ -204,7 +204,7 @@
     light.position.set(5, 5, 1);
     scene.add(light);
 
-    export var weapon = Combat.addWeaponType(App.Combat.WeaponType.NORMAL, App.Display.scene, App.Display.camera);
+    export var weapon = Combat.addWeaponTypeToMe(App.Combat.WeaponType.NORMAL, App.Display.scene, App.Display.camera);
 
     export function processGameData(data: IGameData) {
         switch (data.type) {

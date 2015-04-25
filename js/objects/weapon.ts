@@ -18,7 +18,7 @@
         }
     }
 
-    function getWeaponMesh(weaponType: WeaponType, camera: THREE.Camera): THREE.Mesh {
+    function getWeaponMesh(weaponType: WeaponType): THREE.Mesh {
         var weaponMesh: THREE.Mesh;
 
         switch (weaponType) {
@@ -65,11 +65,16 @@
         }
     }
 
-    export function addWeaponType(weaponType: WeaponType, scene: THREE.Scene, camera: THREE.Camera) {
-        var bullet = new Weapon(weaponType, getWeaponMesh(weaponType, camera), getWeaponSettings(weaponType));
-        camera.add(bullet.mesh);
-        bullet.mesh.position.set(0.25, -0.15, -0.25);
+    export function createWeaponType(weaponType: WeaponType) {
+        var weapon = new Weapon(weaponType, getWeaponMesh(weaponType), getWeaponSettings(weaponType));
+        return weapon;
+    }
+
+    export function addWeaponTypeToMe(weaponType: WeaponType, scene: THREE.Scene, camera: THREE.Camera) {
+        var weapon = new Weapon(weaponType, getWeaponMesh(weaponType), getWeaponSettings(weaponType));
+        camera.add(weapon.mesh);
+        weapon.mesh.position.set(0.25, -0.15, -0.25);
         scene.add(camera);
-        return bullet;
+        return weapon;
     }
 }

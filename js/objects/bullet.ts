@@ -21,10 +21,10 @@
     function getBulletSettings(type: BulletType): BulletSetting {
         switch (type) {
             case BulletType.FAST:
-                return new BulletSetting(0.5, 10, 1000);
+                return new BulletSetting(0.5, 10, 600);
             case BulletType.NORMAL:
             default:
-                return new BulletSetting(0.1, 10, 1000);
+                return new BulletSetting(0.1, 10, 600);
         }
     }
 

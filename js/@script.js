@@ -59,7 +59,7 @@ var App;
                     return 0 /* NORMAL */;
             }
         }
-        function getWeaponMesh(weaponType, camera) {
+        function getWeaponMesh(weaponType) {
             var weaponMesh;
             switch (weaponType) {
                 case 1 /* AUTOMATIC */:
@@ -97,14 +97,19 @@ var App;
             return Weapon;
         })();
         Combat.Weapon = Weapon;
-        function addWeaponType(weaponType, scene, camera) {
-            var bullet = new Weapon(weaponType, getWeaponMesh(weaponType, camera), getWeaponSettings(weaponType));
-            camera.add(bullet.mesh);
-            bullet.mesh.position.set(0.25, -0.15, -0.25);
-            scene.add(camera);
-            return bullet;
+        function createWeaponType(weaponType) {
+            var weapon = new Weapon(weaponType, getWeaponMesh(weaponType), getWeaponSettings(weaponType));
+            return weapon;
         }
-        Combat.addWeaponType = addWeaponType;
+        Combat.createWeaponType = createWeaponType;
+        function addWeaponTypeToMe(weaponType, scene, camera) {
+            var weapon = new Weapon(weaponType, getWeaponMesh(weaponType), getWeaponSettings(weaponType));
+            camera.add(weapon.mesh);
+            weapon.mesh.position.set(0.25, -0.15, -0.25);
+            scene.add(camera);
+            return weapon;
+        }
+        Combat.addWeaponTypeToMe = addWeaponTypeToMe;
     })(Combat = App.Combat || (App.Combat = {}));
 })(App || (App = {}));
 var __extends = this.__extends || function (d, b) {
@@ -134,10 +139,10 @@ var App;
         function getBulletSettings(type) {
             switch (type) {
                 case 1 /* FAST */:
-                    return new BulletSetting(0.5, 10, 1000);
+                    return new BulletSetting(0.5, 10, 600);
                 case 0 /* NORMAL */:
                 default:
-                    return new BulletSetting(0.1, 10, 1000);
+                    return new BulletSetting(0.1, 10, 600);
             }
         }
         function getBulletMesh(type) {
@@ -227,6 +232,30 @@ var App;
                 me.position.x = x;
                 me.position.y = y;
                 me.position.z = z;
+            };
+            this.addWeapon = function (weaponType) {
+                for (var i = 0; i < me.weapons.length; i++) {
+                    if (me.weapons[i].weaponType == weaponType) {
+                    }
+                    else {
+                        var newWeapon = App.Combat.createWeaponType(weaponType);
+                        me.weapons.push(newWeapon);
+                    }
+                }
+            };
+            this.setWeapon = function (index, scene) {
+                //check validity of index
+                if (index < 0 || Math.abs(index) != index || index >= me.weapons.length) {
+                    throw new Error("The index of the weapon you are trying to set is incorrect");
+                    return;
+                }
+                if (me.currentWeapon != null) {
+                    me.mesh.remove(me.weapons[me.currentWeapon].mesh);
+                    scene.remove(me.weapons[me.currentWeapon].mesh);
+                }
+                me.mesh.add(me.weapons[index].mesh);
+                scene.add(me.weapons[index].mesh);
+                me.currentWeapon = index;
             };
         }
         return Player;
@@ -801,7 +830,7 @@ var App;
         var light = new THREE.PointLight(0xff0000, 1, 100);
         light.position.set(5, 5, 1);
         Display.scene.add(light);
-        Display.weapon = App.Combat.addWeaponType(0 /* NORMAL */, App.Display.scene, App.Display.camera);
+        Display.weapon = App.Combat.addWeaponTypeToMe(0 /* NORMAL */, App.Display.scene, App.Display.camera);
         function processGameData(data) {
             switch (data.type) {
                 case 0 /* BULLET */:
