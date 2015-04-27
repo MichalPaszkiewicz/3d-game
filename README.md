@@ -29,6 +29,8 @@ To do list:
 - Collision detection
 - Assets added
 - Physics added
+- Cross browser compatibility
+- Map maker
 
 Updates
 --------
