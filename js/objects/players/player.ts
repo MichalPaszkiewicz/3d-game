@@ -45,13 +45,14 @@
 
                 for (var i = 0; i < me.weapons.length; i++) {
                     if (me.weapons[i].weaponType == weaponType) {
-                        // todo: add weapon or such
-                    }
-                    else {
-                        var newWeapon = App.Combat.createWeaponType(weaponType);
-                        me.weapons.push(newWeapon);
+                        // todo: add weapon ammo or such
+
+                        return;
                     }
                 }
+
+                var newWeapon = App.Combat.createWeaponType(weaponType);
+                me.weapons.push(newWeapon);
             }
 
             this.setWeapon = function (index: number, scene: THREE.Scene) {

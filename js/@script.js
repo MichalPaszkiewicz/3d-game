@@ -236,12 +236,12 @@ var App;
             this.addWeapon = function (weaponType) {
                 for (var i = 0; i < me.weapons.length; i++) {
                     if (me.weapons[i].weaponType == weaponType) {
-                    }
-                    else {
-                        var newWeapon = App.Combat.createWeaponType(weaponType);
-                        me.weapons.push(newWeapon);
+                        // todo: add weapon ammo or such
+                        return;
                     }
                 }
+                var newWeapon = App.Combat.createWeaponType(weaponType);
+                me.weapons.push(newWeapon);
             };
             this.setWeapon = function (index, scene) {
                 //check validity of index
