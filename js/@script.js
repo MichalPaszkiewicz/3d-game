@@ -257,6 +257,12 @@ var App;
                 scene.add(me.weapons[index].mesh);
                 me.currentWeapon = index;
             };
+            this.weaponDown = function (scene) {
+                me.setWeapon((me.currentWeapon + 1) % me.weapons.length, scene);
+            };
+            this.weaponUp = function (scene) {
+                me.setWeapon((me.currentWeapon - 1 + me.weapons.length) % me.weapons.length, scene);
+            };
         }
         return Player;
     })();

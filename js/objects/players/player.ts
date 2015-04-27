@@ -24,6 +24,10 @@
 
         setWeapon: (weaponType: App.Combat.WeaponType, scene: THREE.Scene) => void;
 
+        weaponDown: (scene: THREE.Scene) => void;
+
+        weaponUp: (scene: THREE.Scene) => void;
+
         constructor(name : string) {
 
             this.name = name;
@@ -71,6 +75,14 @@
                 me.mesh.add(me.weapons[index].mesh);
                 scene.add(me.weapons[index].mesh);
                 me.currentWeapon = index;
+            }
+
+            this.weaponDown = function (scene: THREE.Scene) {
+                me.setWeapon((me.currentWeapon + 1) % me.weapons.length, scene);
+            }
+
+            this.weaponUp = function (scene: THREE.Scene) {
+                me.setWeapon((me.currentWeapon - 1 + me.weapons.length) % me.weapons.length, scene);
             }
         }
     }
