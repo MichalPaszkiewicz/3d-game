@@ -2,6 +2,6 @@
 
 CD to this folder, then run:
 
-npm install ws
+`npm install ws`
 
-node server.js
+`node server.js`

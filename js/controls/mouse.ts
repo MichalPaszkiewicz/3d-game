@@ -30,14 +30,24 @@
     }
 
     function moveCallback(e) {
+        moveByAmounts(e.movementX, e.movementY);
+    }
+
+    export function moveByAmounts(x: number, y: number) {
         var scaleFactor = getScaleFactor();
-        if (Math.abs(fullRotationX - e.movementY / scaleFactor) < (Math.PI / 2)) {
-            App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / scaleFactor);
-            rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / scaleFactor);
-            fullRotationX -= e.movementY / scaleFactor;
-            fullRotationY -= e.movementX / scaleFactor;
+
+        var amountX = x / scaleFactor;
+        var amountY = y / scaleFactor;
+
+        if (Math.abs(fullRotationX - amountY) < (Math.PI / 2)) {
+
+            App.Display.camera.rotateOnAxis(cameraXAxis, - amountY);
+            rotationYAxis.applyAxisAngle(cameraXAxis, amountY);
+            fullRotationX -= amountY;
+
         }
-        App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / scaleFactor);
+        fullRotationY -= amountX;
+        App.Display.camera.rotateOnAxis(rotationYAxis, - amountX);
     }
 
     function clickCallback(e) {

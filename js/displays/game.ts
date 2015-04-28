@@ -22,12 +22,21 @@
     // var controls = new THREE.OrbitControls(camera);
     // controls.addEventListener('change', render);
     // controls.update();
+
+    var zoomT: number = 0;
+
+    /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
     function render() {
         if (KEYSPRESSED.C) {
             camera.position.y = 0.25;
         }
         else {
             camera.position.y = 0.75;
+        }
+
+        if (App.Control.zoom) {
+            zoomT++;
+            App.Control.moveByAmounts(Math.sin(zoomT / 50) / 8, Math.cos(zoomT / 25) / 12);
         }
 
         if (bullets != null && updateAllBullets != null) {
@@ -49,6 +58,7 @@
 
         window.requestAnimationFrame(render);
     }
+    /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
     render();
 
     function speed() {
@@ -162,7 +172,7 @@
         }
     }
 
-    export function toggleZoom(){
+    export function toggleZoom() {
         if (App.Control.zoom) {
             camera.fov /= 16;
             App.Display.currentCrossHair = App.Display.crossHairType.SNIPER_ZOOM;

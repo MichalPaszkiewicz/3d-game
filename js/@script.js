@@ -678,12 +678,18 @@ var App;
         // var controls = new THREE.OrbitControls(camera);
         // controls.addEventListener('change', render);
         // controls.update();
+        var zoomT = 0;
+        /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
         function render() {
             if (KEYSPRESSED.C) {
                 Display.camera.position.y = 0.25;
             }
             else {
                 Display.camera.position.y = 0.75;
+            }
+            if (App.Control.zoom) {
+                zoomT++;
+                App.Control.moveByAmounts(Math.sin(zoomT / 50) / 8, Math.cos(zoomT / 25) / 12);
             }
             if (Display.bullets != null && updateAllBullets != null) {
                 updateAllBullets();
@@ -700,6 +706,7 @@ var App;
             }
             window.requestAnimationFrame(render);
         }
+        /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
         render();
         function speed() {
             if (KEYSPRESSED.C) {
@@ -995,15 +1002,21 @@ var App;
             return 100 * (Control.zoom ? 32 : 1);
         }
         function moveCallback(e) {
-            var scaleFactor = getScaleFactor();
-            if (Math.abs(Control.fullRotationX - e.movementY / scaleFactor) < (Math.PI / 2)) {
-                App.Display.camera.rotateOnAxis(cameraXAxis, -e.movementY / scaleFactor);
-                rotationYAxis.applyAxisAngle(cameraXAxis, e.movementY / scaleFactor);
-                Control.fullRotationX -= e.movementY / scaleFactor;
-                Control.fullRotationY -= e.movementX / scaleFactor;
-            }
-            App.Display.camera.rotateOnAxis(rotationYAxis, -e.movementX / scaleFactor);
+            moveByAmounts(e.movementX, e.movementY);
         }
+        function moveByAmounts(x, y) {
+            var scaleFactor = getScaleFactor();
+            var amountX = x / scaleFactor;
+            var amountY = y / scaleFactor;
+            if (Math.abs(Control.fullRotationX - amountY) < (Math.PI / 2)) {
+                App.Display.camera.rotateOnAxis(cameraXAxis, -amountY);
+                rotationYAxis.applyAxisAngle(cameraXAxis, amountY);
+                Control.fullRotationX -= amountY;
+            }
+            Control.fullRotationY -= amountX;
+            App.Display.camera.rotateOnAxis(rotationYAxis, -amountX);
+        }
+        Control.moveByAmounts = moveByAmounts;
         function clickCallback(e) {
             // leftclick
             if (e.button == 0) {
