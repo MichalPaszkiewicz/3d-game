@@ -1,5 +1,4 @@
-﻿/// <reference path="../objects/me.ts" />
-module App.Display {
+﻿module App.Display {
 
     export function drawEnergyBar() {
         if (App.ME.energy != null) {

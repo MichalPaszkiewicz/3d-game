@@ -118,7 +118,7 @@
     <TypeScriptCompile Include="js\objects\bullet.ts" />
     <TypeScriptCompile Include="js\objects\gameData.ts" />
     <TypeScriptCompile Include="js\objects\players\human.ts" />
-    <TypeScriptCompile Include="js\objects\me.ts" />
+    <TypeScriptCompile Include="js\managers\me.ts" />
     <TypeScriptCompile Include="js\objects\message.ts" />
     <TypeScriptCompile Include="js\objects\scenery\layout\plane.ts" />
     <TypeScriptCompile Include="js\objects\scenery\plants\plant.ts" />

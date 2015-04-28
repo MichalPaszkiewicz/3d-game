@@ -31,14 +31,6 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
-    var ME;
-    (function (ME) {
-        ME.energy = 100;
-        ME.health = 100;
-    })(ME = App.ME || (App.ME = {}));
-})(App || (App = {}));
-var App;
-(function (App) {
     var Combat;
     (function (Combat) {
         (function (WeaponType) {
@@ -501,6 +493,10 @@ var App;
 })(App || (App = {}));
 var App;
 (function (App) {
+    App.ME = new App.Human("me");
+})(App || (App = {}));
+var App;
+(function (App) {
     function serverChat(message) {
         App.Comms.sendToServer("chat", message);
         App.Display.log("me: " + message);
@@ -866,7 +862,6 @@ var App;
         Display.processGameData = processGameData;
     })(Display = App.Display || (App.Display = {}));
 })(App || (App = {}));
-/// <reference path="../objects/me.ts" />
 var App;
 (function (App) {
     var Display;
@@ -1253,7 +1248,6 @@ var App;
 // objects
 /// <reference path="js/objects/message.ts" />
 /// <reference path="js/objects/gamedata.ts" />
-/// <reference path="js/objects/me.ts" />
 /// <reference path="js/objects/weapon.ts" />
 /// <reference path="js/objects/bullet.ts" />
 /// <reference path="js/objects/players/player.ts" />
@@ -1267,6 +1261,7 @@ var App;
 // managers
 /// <reference path="js/managers/player.manager.ts" />
 /// <reference path="js/managers/scene.manager.ts" />
+/// <reference path="js/managers/me.ts" />
 // main
 /// <reference path="js/main.ts" />
 /// <reference path="js/canvas.ts" />

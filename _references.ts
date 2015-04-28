@@ -6,7 +6,6 @@
 
 /// <reference path="js/objects/message.ts" />
 /// <reference path="js/objects/gamedata.ts" />
-/// <reference path="js/objects/me.ts" />
 
 /// <reference path="js/objects/weapon.ts" />
 /// <reference path="js/objects/bullet.ts" />
@@ -25,6 +24,7 @@
 
 /// <reference path="js/managers/player.manager.ts" />
 /// <reference path="js/managers/scene.manager.ts" />
+/// <reference path="js/managers/me.ts" />
 
 // main
 
