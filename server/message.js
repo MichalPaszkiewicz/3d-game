@@ -1,12 +1,13 @@
 ﻿// message.js
 // ==========
 module.exports = {
-    Message: function (type, message) {
+    Message: function (type, message, from) {
         
         var self = {};
         self.content = {
             type: type,
-            message: message
+            message: message,
+            from : from
         };
 
         self.asString = function () {

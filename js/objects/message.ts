@@ -4,7 +4,8 @@
         var self = {
             content: {
                 type: type,
-                message: message
+                message: message,
+                from: null
             },
             asString: function () {
                 return JSON.stringify(self.content);

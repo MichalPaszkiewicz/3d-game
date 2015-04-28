@@ -46,6 +46,8 @@
         var dataJSON = JSON.parse(data);
 
         if (dataJSON != null) {
+            console.log(dataJSON.from);
+
             switch (dataJSON.type) {
                 case "text":
                     log("(Server) " + dataJSON.message);
@@ -85,6 +87,7 @@
 
     export function sendToServer(type: string, message: string | Object) {
         var newItem = Message(type, message);
+        newItem.content.from = myID;
         socket.send(newItem.asString());
     }
 }

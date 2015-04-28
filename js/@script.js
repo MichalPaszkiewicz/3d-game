@@ -4,7 +4,8 @@ var App;
         var self = {
             content: {
                 type: type,
-                message: message
+                message: message,
+                from: null
             },
             asString: function () {
                 return JSON.stringify(self.content);
@@ -1201,6 +1202,7 @@ var App;
             var data = msg.data;
             var dataJSON = JSON.parse(data);
             if (dataJSON != null) {
+                console.log(dataJSON.from);
                 switch (dataJSON.type) {
                     case "text":
                         log("(Server) " + dataJSON.message);
@@ -1238,6 +1240,7 @@ var App;
         }
         function sendToServer(type, message) {
             var newItem = App.Message(type, message);
+            newItem.content.from = Comms.myID;
             socket.send(newItem.asString());
         }
         Comms.sendToServer = sendToServer;

@@ -37,18 +37,18 @@ wss.on('connection', function (ws) {
             switch (messageJSON.type) {
                 case "text":
                     if (typeof messageJSON.message == "string") {
-                        response = new m.Message("text", messageJSON.message);
+                        response = new m.Message("text", messageJSON.message, messageJSON.from);
                     }
                     else {
-                        response = new m.Message("text", JSON.stringify(messageJSON.message));
+                        response = new m.Message("text", JSON.stringify(messageJSON.message), messageJSON.from);
                     }
                     break;
                 case "chat":
                     if (typeof messageJSON.message == "string") {
-                        response = new m.Message("text", ws.connectionID + ": " + messageJSON.message);
+                        response = new m.Message("text", ws.connectionID + ": " + messageJSON.message, messageJSON.from);
                     }
                     else {
-                        response = new m.Message("text", ws.connectionID + ": " + JSON.stringify(messageJSON.message));
+                        response = new m.Message("text", ws.connectionID + ": " + JSON.stringify(messageJSON.message), messageJSON.from);
                     }
                     sendToOthers(ws.connectionID, response);
                     return;
@@ -56,28 +56,28 @@ wss.on('connection', function (ws) {
                     ws.connectionID = messageJSON.message;
                     peers.add(messageJSON.message, ws);
                     console.log("peer " + messageJSON.message + " added.");
-                    response = new m.Message("text", "person " + messageJSON.message + " has connected");
+                    response = new m.Message("text", "person " + messageJSON.message + " has connected", messageJSON.from);
                     sendToOthers(messageJSON.message, response);
                     return;
                 case "offer":
-                    var response = new m.Message("offer", messageJSON.message);
+                    var response = new m.Message("offer", messageJSON.message, messageJSON.from);
                     sendToOthers(ws.connectionID, response);
                     return;
                 case "answer":
-                    var response = new m.Message("answer", messageJSON.message.answer);
+                    var response = new m.Message("answer", messageJSON.message.answer, messageJSON.from);
                     sendToPerson(messageJSON.message.to, response);
                     return;
                 case "candidate":
-                    response = new m.Message("candidate", messageJSON.message.candidate);
+                    response = new m.Message("candidate", messageJSON.message.candidate, messageJSON.from);
                     sendToOthers(ws.connectionID, response);
                     return;
                 default:
                     console.log("Defaulted");
-                    response = new m.Message("text", "socket received: " + message);
+                    response = new m.Message("text", "socket received: " + message, messageJSON.from);
             }
         }
         catch (e) {
-            response = new m.Message("text", "socket received: " + JSON.stringify(message));
+            response = new m.Message("text", "socket received: " + JSON.stringify(message), messageJSON.from);
             console.log("error: " + e.message);
             //console.log("stack: " + e.stack);
         }
