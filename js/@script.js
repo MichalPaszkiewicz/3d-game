@@ -386,23 +386,24 @@ var App;
             var players = [];
             function addPlayer(player) {
                 players.push(player);
+                return player;
             }
             function addHuman(human) {
-                addPlayer(human);
+                return addPlayer(human);
             }
             Player.addHuman = addHuman;
             function addAI(ai) {
-                addPlayer(ai);
+                return addPlayer(ai);
             }
             Player.addAI = addAI;
             function addNewHuman(name) {
                 var human = new App.Human(name);
-                addHuman(human);
+                return addHuman(human);
             }
             Player.addNewHuman = addNewHuman;
             function addNewAI(name) {
                 var ai = new App.AI(name);
-                addAI(ai);
+                return addAI(ai);
             }
             Player.addNewAI = addNewAI;
             function Do(x) {
@@ -439,20 +440,22 @@ var App;
                 for (var i = 0; i < players.length; i++) {
                     if (players[i] instanceof App.Human) {
                         if (players[i].name == name) {
-                            players.splice(i, 1);
+                            return players.splice(i, 1);
                         }
                     }
                 }
+                return [];
             }
             Player.removeHuman = removeHuman;
             function removeAI(name) {
                 for (var i = 0; i < players.length; i++) {
                     if (players[i] instanceof App.AI) {
                         if (players[i].name == name) {
-                            players.splice(i, 1);
+                            return players.splice(i, 1);
                         }
                     }
                 }
+                return [];
             }
             Player.removeAI = removeAI;
             function getAIFromName(name) {
@@ -676,7 +679,7 @@ var App;
         // controls.addEventListener('change', render);
         // controls.update();
         var zoomT = 0;
-        /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
+        /* \/********** THIS IS WHERE EVERYTHING HAPPENS **********\/ */
         function render() {
             if (KEYSPRESSED.C) {
                 Display.camera.position.y = 0.25;
@@ -703,7 +706,7 @@ var App;
             }
             window.requestAnimationFrame(render);
         }
-        /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
+        /* ^^ */
         render();
         function speed() {
             if (KEYSPRESSED.C) {
@@ -1204,6 +1207,13 @@ var App;
             if (dataJSON != null) {
                 console.log(dataJSON.from);
                 switch (dataJSON.type) {
+                    case "connexion":
+                        var newPlayer = App.Manager.Player.addNewHuman(dataJSON.from);
+                        newPlayer.peerConnection = Comms.createPeerConnection();
+                        Comms.attachRTCConnectionFunctions(newPlayer.peerConnection);
+                        newPlayer.dataChannel = Comms.createDataChannel(newPlayer.peerConnection);
+                        Comms.attachRTCDataChannelFunctions(newPlayer.dataChannel);
+                        Comms.sendOffer(newPlayer.peerConnection);
                     case "text":
                         log("(Server) " + dataJSON.message);
                         break;

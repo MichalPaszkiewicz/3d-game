@@ -56,7 +56,7 @@ wss.on('connection', function (ws) {
                     ws.connectionID = messageJSON.message;
                     peers.add(messageJSON.message, ws);
                     console.log("peer " + messageJSON.message + " added.");
-                    response = new m.Message("text", "person " + messageJSON.message + " has connected", messageJSON.from);
+                    response = new m.Message("connexion", "person " + messageJSON.message + " has connected", messageJSON.from);
                     sendToOthers(messageJSON.message, response);
                     return;
                 case "offer":

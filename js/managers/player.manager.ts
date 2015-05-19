@@ -2,35 +2,37 @@
 
     var players: Player[] = [];
 
-    function addPlayer(player: Player) {
+    function addPlayer(player: Player): Player {
         players.push(player);
+
+        return player;
     }
 
-    export function addHuman(human: Human) {
-        addPlayer(human);
+    export function addHuman(human: Human): Human {
+        return <Human>addPlayer(human);
     }
 
-    export function addAI(ai: AI) {
-        addPlayer(ai);
+    export function addAI(ai: AI): AI {
+        return addPlayer(ai);
     }
 
-    export function addNewHuman(name: string){
+    export function addNewHuman(name: string): Human{
         var human = new Human(name);
-        addHuman(human);
+        return addHuman(human);
     }
 
-    export function addNewAI(name: string) {
+    export function addNewAI(name: string): AI {
         var ai = new AI(name);
-        addAI(ai);
+        return addAI(ai);
     }
 
-    export function Do(x: (player: Player) => void) {
+    export function Do(x: (player: Player) => void): void {
         for (var i = 0; i < players.length; i++) {
             x(players[i]);
         }
     }
 
-    export function DoTo(x: (player: Player) => void, name: string) {
+    export function DoTo(x: (player: Player) => void, name: string): void {
         for (var i = 0; i < players.length; i++) {
             if (players[i].name == name) {
                 x(players[i]);
@@ -38,7 +40,7 @@
         }
     }
 
-    export function AIDo(x: (player: Player) => void) {
+    export function AIDo(x: (player: Player) => void): void {
         Do(function (currentPlayer) {
             if (currentPlayer instanceof AI) {
                 x(currentPlayer);
@@ -46,7 +48,7 @@
         });
     }
 
-    export function HumanDo(x: (player: Player) => void) {
+    export function HumanDo(x: (player: Player) => void): void {
         Do(function (currentPlayer) {
             if (currentPlayer instanceof Human) {
                 x(currentPlayer);
@@ -54,27 +56,29 @@
         });
     }
 
-    export function removeHuman(name: string) {
+    export function removeHuman(name: string): Player[] {
         for (var i = 0; i < players.length; i++) {
             if (players[i] instanceof Human) {
                 if (players[i].name == name) {
-                    players.splice(i, 1);
+                    return players.splice(i, 1);
                 }
             }
         }
+        return [];
     }
 
-    export function removeAI(name: string) {
+    export function removeAI(name: string): Player[] {
         for (var i = 0; i < players.length; i++) {
             if (players[i] instanceof AI) {
                 if (players[i].name == name) {
-                    players.splice(i, 1);
+                    return players.splice(i, 1);
                 }
             }
         }
+        return [];
     }
 
-    export function getAIFromName(name: string) {
+    export function getAIFromName(name: string): Player {
         for (var i = 0; i < players.length; i++) {
             if (players[i] instanceof AI) {
                 if (players[i].name == name) {
@@ -84,11 +88,11 @@
         }
     }
 
-    export function getHumanFromName(name: string) {
+    export function getHumanFromName(name: string): Human {
         for (var i = 0; i < players.length; i++) {
             if (players[i] instanceof Human) {
                 if (players[i].name == name) {
-                    return players[i];
+                    return <Human>players[i];
                 }
             }
         }

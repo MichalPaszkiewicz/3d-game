@@ -25,7 +25,7 @@
 
     var zoomT: number = 0;
 
-    /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
+    /* \/********** THIS IS WHERE EVERYTHING HAPPENS **********\/ */
     function render() {
         if (KEYSPRESSED.C) {
             camera.position.y = 0.25;
@@ -58,7 +58,7 @@
 
         window.requestAnimationFrame(render);
     }
-    /* ********** THIS IS WHERE EVERYTHING HAPPENS ********** */
+    /* ^^ */
     render();
 
     function speed() {

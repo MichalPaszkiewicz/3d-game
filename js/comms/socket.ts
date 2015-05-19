@@ -49,6 +49,13 @@
             console.log(dataJSON.from);
 
             switch (dataJSON.type) {
+                case "connexion":
+                    var newPlayer = Manager.Player.addNewHuman(dataJSON.from);
+                    newPlayer.peerConnection = createPeerConnection();
+                    attachRTCConnectionFunctions(newPlayer.peerConnection);
+                    newPlayer.dataChannel = createDataChannel(newPlayer.peerConnection);
+                    attachRTCDataChannelFunctions(newPlayer.dataChannel);
+                    sendOffer(newPlayer.peerConnection);
                 case "text":
                     log("(Server) " + dataJSON.message);
                     break;
