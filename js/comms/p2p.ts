@@ -26,7 +26,8 @@ module App.Comms {
     }
 
     // attach all necessary functions to dataChannel
-    export function attachRTCDataChannelFunctions(channel: RTCDataChannel) {
+    export function attachRTCDataChannelFunctions(channel: RTCDataChannel, name: string) {
+        var currentName = name;
         channel.onmessage = function (e: any) {
             var data = e.data;
             var dataJSON = JSON.parse(data);
@@ -40,7 +41,7 @@ module App.Comms {
                         log("(webRTC) " + dataJSON.message, "red");
                         break;
                     case "game":
-                        App.Display.processGameData(dataJSON.message);
+                        App.Display.processGameData(dataJSON.message, currentName);
                         break;
                     default:
                         log(dataJSON);
@@ -59,7 +60,7 @@ module App.Comms {
     export var peerConnection = createPeerConnection()
     attachRTCConnectionFunctions(peerConnection);
     export var dataChannel = createDataChannel(peerConnection);
-    attachRTCDataChannelFunctions(dataChannel);
+    attachRTCDataChannelFunctions(dataChannel, "");
 
     export var sdpConstraints: RTCOptionalMediaConstraint = {
         "mandatory":

@@ -50,11 +50,24 @@
 
             switch (dataJSON.type) {
                 case "connexion":
+                    // todo: encapsulate this in a method
                     var newPlayer = Manager.Player.addNewHuman(dataJSON.from);
                     newPlayer.peerConnection = createPeerConnection();
                     attachRTCConnectionFunctions(newPlayer.peerConnection);
                     newPlayer.dataChannel = createDataChannel(newPlayer.peerConnection);
-                    attachRTCDataChannelFunctions(newPlayer.dataChannel);
+                    attachRTCDataChannelFunctions(newPlayer.dataChannel, newPlayer.name);
+                    var loader = new THREE.ObjectLoader();
+                    loader.load("js/models/baymax.json", function (obj) {
+                        obj.scale.x = 0.01;
+                        obj.scale.y = 0.01;
+                        obj.scale.z = 0.01;
+                        obj.translateX(2);
+                        obj.translateY(0.75);
+
+                        newPlayer.object3d = obj;
+
+                        Display.scene.add(newPlayer.object3d);
+                    });
                     sendOffer(newPlayer.peerConnection);
                 case "text":
                     log("(Server) " + dataJSON.message);

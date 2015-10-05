@@ -2,11 +2,11 @@
 
     export class SceneItem implements ICollidable {
 
-        mesh: THREE.Mesh;
+        object3d: THREE.Object3D;
 
         constructor(mesh: THREE.Mesh, scene: THREE.Scene) {
-            this.mesh = mesh;
-            scene.add(this.mesh);
+            this.object3d = mesh;
+            scene.add(this.object3d);
         }
 
     }

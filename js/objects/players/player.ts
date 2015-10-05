@@ -8,13 +8,11 @@
 
         name: string;
 
-        position: THREE.Vector3;
-
         updatePosition: (x: number, y: number, z: number) => void;
 
         weapon: App.Combat.Weapon;
 
-        mesh: THREE.Mesh;
+        object3d: THREE.Object3D;
 
         weapons: App.Combat.Weapon[];
 
@@ -37,12 +35,10 @@
             this.energy = 100;
             this.health = 100;
 
-            this.position = new THREE.Vector3();
-
             this.updatePosition = function (x: number, y: number, z: number) {
-                me.position.x = x;
-                me.position.y = y;
-                me.position.z = z;
+                me.object3d.position.x = x;
+                me.object3d.position.y = y;
+                me.object3d.position.z = z;
             }
 
             this.addWeapon = function (weaponType: App.Combat.WeaponType) {
@@ -68,11 +64,11 @@
                 }
 
                 if (me.currentWeapon != null) {
-                    me.mesh.remove(me.weapons[me.currentWeapon].mesh)
+                    me.object3d.remove(me.weapons[me.currentWeapon].mesh)
                     scene.remove(me.weapons[me.currentWeapon].mesh);
                 }
 
-                me.mesh.add(me.weapons[index].mesh);
+                me.object3d.add(me.weapons[index].mesh);
                 scene.add(me.weapons[index].mesh);
                 me.currentWeapon = index;
             }

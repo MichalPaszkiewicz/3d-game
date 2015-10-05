@@ -202,7 +202,13 @@
         });
     }
 
-    export function handleMovement(pos) {
+    export function handleMovement(pos, from: string) {
+        Manager.Player.DoTo(function (person: Player) {
+            person.object3d.position.x = pos.x;
+            person.object3d.position.z = pos.z;
+            person.object3d.rotation.y = pos.d + Math.PI;
+        }, from);
+
         otherPerson.position.x = pos.x;
         otherPerson.position.z = pos.z;
         otherPerson.rotation.y = pos.d + Math.PI;
@@ -216,7 +222,7 @@
 
     export var weapon = Combat.addWeaponTypeToMe(App.Combat.WeaponType.NORMAL, App.Display.scene, App.Display.camera);
 
-    export function processGameData(data: IGameData) {
+    export function processGameData(data: IGameData, from: string) {
         switch (data.type) {
             case GameDataType.BULLET:
                 var bullet = new App.Combat.ImportBullet(data.data["type"], data.data["settings"], App.Display.camera);
@@ -228,7 +234,7 @@
                 App.Display.scene.add(bullet.mesh);
                 return;
             case GameDataType.POSITION:
-                App.Display.handleMovement(data.data);
+                App.Display.handleMovement(data.data, from);
                 return;
             default:
                 log("Error with processing game data", "orange");

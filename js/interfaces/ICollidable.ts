@@ -2,7 +2,7 @@
 
     export interface ICollidable {
 
-        mesh: THREE.Mesh;
+        object3d: THREE.Object3D;
 
     }
 

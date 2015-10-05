@@ -220,11 +220,10 @@ var App;
             var me = this;
             this.energy = 100;
             this.health = 100;
-            this.position = new THREE.Vector3();
             this.updatePosition = function (x, y, z) {
-                me.position.x = x;
-                me.position.y = y;
-                me.position.z = z;
+                me.object3d.position.x = x;
+                me.object3d.position.y = y;
+                me.object3d.position.z = z;
             };
             this.addWeapon = function (weaponType) {
                 for (var i = 0; i < me.weapons.length; i++) {
@@ -243,10 +242,10 @@ var App;
                     return;
                 }
                 if (me.currentWeapon != null) {
-                    me.mesh.remove(me.weapons[me.currentWeapon].mesh);
+                    me.object3d.remove(me.weapons[me.currentWeapon].mesh);
                     scene.remove(me.weapons[me.currentWeapon].mesh);
                 }
-                me.mesh.add(me.weapons[index].mesh);
+                me.object3d.add(me.weapons[index].mesh);
                 scene.add(me.weapons[index].mesh);
                 me.currentWeapon = index;
             };
@@ -289,8 +288,8 @@ var App;
     (function (Scene) {
         var SceneItem = (function () {
             function SceneItem(mesh, scene) {
-                this.mesh = mesh;
-                scene.add(this.mesh);
+                this.object3d = mesh;
+                scene.add(this.object3d);
             }
             return SceneItem;
         })();
@@ -833,7 +832,12 @@ var App;
                 Display.scene.add(obj);
             });
         }
-        function handleMovement(pos) {
+        function handleMovement(pos, from) {
+            App.Manager.Player.DoTo(function (person) {
+                person.object3d.position.x = pos.x;
+                person.object3d.position.z = pos.z;
+                person.object3d.rotation.y = pos.d + Math.PI;
+            }, from);
             Display.otherPerson.position.x = pos.x;
             Display.otherPerson.position.z = pos.z;
             Display.otherPerson.rotation.y = pos.d + Math.PI;
@@ -844,7 +848,7 @@ var App;
         light.position.set(5, 5, 1);
         Display.scene.add(light);
         Display.weapon = App.Combat.addWeaponTypeToMe(0 /* NORMAL */, App.Display.scene, App.Display.camera);
-        function processGameData(data) {
+        function processGameData(data, from) {
             switch (data.type) {
                 case 0 /* BULLET */:
                     var bullet = new App.Combat.ImportBullet(data.data["type"], data.data["settings"], App.Display.camera);
@@ -856,7 +860,7 @@ var App;
                     App.Display.scene.add(bullet.mesh);
                     return;
                 case 1 /* POSITION */:
-                    App.Display.handleMovement(data.data);
+                    App.Display.handleMovement(data.data, from);
                     return;
                 default:
                     Display.log("Error with processing game data", "orange");
@@ -1085,7 +1089,8 @@ var App;
         }
         Comms.createDataChannel = createDataChannel;
         // attach all necessary functions to dataChannel
-        function attachRTCDataChannelFunctions(channel) {
+        function attachRTCDataChannelFunctions(channel, name) {
+            var currentName = name;
             channel.onmessage = function (e) {
                 var data = e.data;
                 var dataJSON = JSON.parse(data);
@@ -1098,7 +1103,7 @@ var App;
                             log("(webRTC) " + dataJSON.message, "red");
                             break;
                         case "game":
-                            App.Display.processGameData(dataJSON.message);
+                            App.Display.processGameData(dataJSON.message, currentName);
                             break;
                         default:
                             log(dataJSON);
@@ -1122,7 +1127,7 @@ var App;
         Comms.peerConnection = createPeerConnection();
         attachRTCConnectionFunctions(Comms.peerConnection);
         Comms.dataChannel = createDataChannel(Comms.peerConnection);
-        attachRTCDataChannelFunctions(Comms.dataChannel);
+        attachRTCDataChannelFunctions(Comms.dataChannel, "");
         Comms.sdpConstraints = {
             "mandatory": {
                 "OfferToReceiveAudio": false,
@@ -1208,11 +1213,22 @@ var App;
                 console.log(dataJSON.from);
                 switch (dataJSON.type) {
                     case "connexion":
+                        // todo: encapsulate this in a method
                         var newPlayer = App.Manager.Player.addNewHuman(dataJSON.from);
                         newPlayer.peerConnection = Comms.createPeerConnection();
                         Comms.attachRTCConnectionFunctions(newPlayer.peerConnection);
                         newPlayer.dataChannel = Comms.createDataChannel(newPlayer.peerConnection);
-                        Comms.attachRTCDataChannelFunctions(newPlayer.dataChannel);
+                        Comms.attachRTCDataChannelFunctions(newPlayer.dataChannel, newPlayer.name);
+                        var loader = new THREE.ObjectLoader();
+                        loader.load("js/models/baymax.json", function (obj) {
+                            obj.scale.x = 0.01;
+                            obj.scale.y = 0.01;
+                            obj.scale.z = 0.01;
+                            obj.translateX(2);
+                            obj.translateY(0.75);
+                            newPlayer.object3d = obj;
+                            App.Display.scene.add(newPlayer.object3d);
+                        });
                         Comms.sendOffer(newPlayer.peerConnection);
                     case "text":
                         log("(Server) " + dataJSON.message);
