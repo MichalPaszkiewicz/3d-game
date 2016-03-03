@@ -22,6 +22,7 @@ If you could help out with anything mentioned under the 'to do list' header, tha
 Contributors
 =====================
 Michal Paszkiewicz
+[Aaryadev](https://github.com/aaryadev)
 
 To do list:
 -----------
